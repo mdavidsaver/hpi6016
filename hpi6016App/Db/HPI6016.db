@@ -1,0 +1,429 @@
+
+record(ai, "$(P)DoseRate-I") {
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) DoseRate")
+    field(SCAN, "I/O Intr")
+    field(LINR, "LINEAR")
+    field(ESLO, "1e-2")
+    field(PREC, "2")
+    field(ADEL, "0.05")
+    field(HOPR, "500")
+    field(LOPR, "-0.5")
+    field(EGU , "mR/h")
+    field(FLNK, "$(P)Update:1-FOut_")
+}
+
+# Trigger other values read from driver
+record(fanout, "$(P)Update:1-FOut_") {
+    field(LNK1, "$(P)Lvl:1-I")
+    field(LNK2, "$(P)Lvl:2-I")
+    field(LNK3, "$(P)Lvl:3-I")
+    field(LNK4, "$(P)Cnt:Fail-I")
+    field(LNK5, "$(P)Stat-Sts")
+    field(LNK6, "$(P)Connect-Sts")
+    field(FLNK, "$(P)Update:2-FOut_")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(fanout, "$(P)Update:2-FOut_") {
+    field(LNK1, "$(P)DataTime-I_")
+    field(FLNK, "$(P)Update:3-FOut_")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+# breaks up bits found in $(P)Stat-Sts
+record(fanout, "$(P)Update:3-FOut_") {
+    field(LNK1, "$(P)Alrm:1-Sts")
+    field(LNK2, "$(P)Alrm:2-Sts")
+    field(LNK3, "$(P)Alrm:3-Sts")
+    field(LNK4, "$(P)Alrm:Fail-Sts")
+    field(LNK5, "$(P)Alrm:Oflow-Sts")
+    field(LNK6, "$(P)Alrm:Pulse-Sts")
+    field(FLNK, "$(P)Update:4-FOut_")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+# Other calculations
+record(fanout, "$(P)Update:4-FOut_") {
+    field(LNK1, "$(P)Alrm:Sum-Sts_")
+    field(LNK2, "$(P)DoseRate:S-I")
+    field(LNK3, "$(P)Dose:1m-Calc_")
+    field(LNK4, "$(P)Dose:5m-Calc_")
+    field(LNK5, "$(P)Dose:1h-Calc_")
+    field(LNK6, "$(P)Dose:1d-Calc_")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(ai, "$(P)Lvl:1-I") {
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) Lvl1")
+    field(LINR, "LINEAR")
+    field(ESLO, "1e-2")
+    field(PREC, "2")
+    field(EGU , "mR/h")
+    field(HOPR, "655.35")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+    alias("$(P)Lvl:High-I")
+}
+
+record(ai, "$(P)Lvl:2-I") {
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) Lvl2")
+    field(LINR, "LINEAR")
+    field(ESLO, "1e-2")
+    field(PREC, "2")
+    field(EGU , "mR/h")
+    field(HOPR, "655.35")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+    alias("$(P)Lvl:Low-I")
+}
+
+record(ai, "$(P)Lvl:3-I") {
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) Lvl3")
+    field(LINR, "LINEAR")
+    field(ESLO, "1e-2")
+    field(PREC, "2")
+    field(EGU , "mR/h")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+    field(HOPR, "655.35")
+}
+
+record(longin, "$(P)Cnt:Fail-I") {
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) FailCnt")
+    field(HOPR, "0xff")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(mbbiDirect, "$(P)Stat-Sts") {
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) Bits")
+    field(DESC, "Raw status byte")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(bi, "$(P)Connect-Sts") {
+    field(DTYP, "ARM Connected")
+    field(INP , "@$(PORT)")
+    field(ZNAM, "Disconnect")
+    field(ONAM, "Connect")
+    field(ZSV , "MAJOR")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+    field(FLNK, "$(P)Valid-Sts")
+}
+
+record(bi, "$(P)Valid-Sts") {
+    field(DTYP, "ARM Valid")
+    field(INP , "@$(PORT)")
+    field(ZNAM, "OK")
+    field(ONAM, "No Data")
+    field(OSV , "MAJOR")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+    field(FLNK, "$(P)Msg-I")
+    alias("$(P)Alrm:Comm-Sts")
+}
+
+record(waveform, "$(P)Msg-I") {
+    field(DTYP, "ARM Last Msg")
+    field(INP , "@$(PORT)")
+    field(FTVL, "CHAR")
+    field(NELM, "100")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+    field(FLNK, "$(P)Cnt:Conn-I")
+}
+
+record(longin, "$(P)Cnt:Conn-I") {
+    field(DESC, "# of connections")
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) CntConn")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+    field(FLNK, "$(P)Cnt:Update-I")
+}
+
+record(longin, "$(P)Cnt:Update-I") {
+    field(DESC, "# of date updates")
+    field(DTYP, "ARM Read Param")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+    field(INP , "@$(PORT) CntUpdate")
+}
+
+# Monitor time since last update
+
+# copy timestamp from raw value
+record(ai, "$(P)DataTime-I_") {
+  field(DTYP, "Soft Timestamp")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+  field(FLNK, "$(P)Itvl:Data-I")
+}
+
+# Find time since last update
+record(calc, "$(P)Itvl:Data-I") {
+  field(DESC, "Time between updates")
+  field(INPA, "$(P)DataTime-I_ NPP")
+  field(INPB, "$(P)DataTime2-I_ NPP")
+  field(CALC, "A-B")
+  field(FLNK, "$(P)DataTime2-I_")
+  field(ADEL, "0.002")
+  field(PREC, "3")
+  field(EGU , "s")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(ai, "$(P)DataTime2-I_") {
+  field(DTYP, "Soft Timestamp")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+# Break out bits from $(P)Stat-Sts
+
+record(bi, "$(P)Alrm:1-Sts") {
+  field(INP , "$(P)Stat-Sts.B0 NPP MSS")
+  field(ZNAM, "Normal")
+  field(ONAM, "Trip")
+  field(OSV , "MAJOR")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+  alias("$(P)Alrm:High-Sts")
+}
+
+record(bi, "$(P)Alrm:2-Sts") {
+  field(INP , "$(P)Stat-Sts.B1 NPP MSS")
+  field(ZNAM, "Normal")
+  field(ONAM, "Trip")
+  field(OSV , "MINOR")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+  alias("$(P)Alrm:Low-Sts")
+}
+
+record(bi, "$(P)Alrm:3-Sts") {
+  field(INP , "$(P)Stat-Sts.B2 NPP MSS")
+  field(ZNAM, "Normal")
+  field(ONAM, "Trip")
+  field(OSV , "MAJOR")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(bi, "$(P)Alrm:Fail-Sts") {
+  field(INP , "$(P)Stat-Sts.B3 NPP MSS")
+  field(ZNAM, "Normal")
+  field(ONAM, "Fail")
+  field(OSV , "MAJOR")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(bi, "$(P)Alrm:Oflow-Sts") {
+  field(INP , "$(P)Stat-Sts.B4 NPP MSS")
+  field(ZNAM, "Normal")
+  field(ONAM, "Overflow")
+  field(OSV , "MAJOR")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(bi, "$(P)Alrm:Pulse-Sts") {
+  field(INP , "$(P)Stat-Sts.B6 NPP MSS")
+  field(ZNAM, "Normal")
+  field(ONAM, "Fail")
+  field(OSV , "MAJOR")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+# Summarize alarms from a single detector
+
+record(calcout, "$(P)Alrm:Sum-Sts_") {
+  field(INPA, "$(P)Alrm:Low-Sts NPP")
+  field(INPB, "$(P)Alrm:High-Sts NPP")
+  field(INPC, "$(P)Alrm:Pulse-Sts NPP")
+  field(INPD, "$(P)Alrm:Fail-Sts NPP")
+  field(INPE, "$(P)Alrm:Comm-Sts NPP")
+  field(CALC, "E?3:(B||C||D)?2:A?1:0")
+  field(OUT , "$(P)Alrm:Sum-Sts PP")
+  field(IVOA, "Set output to IVOV")
+  field(IVOV, "3")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(mbbi, "$(P)Alrm:Sum-Sts") {
+  field(ZRST, "Normal")
+  field(ONST, "Warning")
+  field(TWST, "Alarm")
+  field(THST, "Comm.")
+  field(ONSV, "MINOR")
+  field(TWSV, "MAJOR")
+  field(THSV, "INVALID")
+  field(FRSV, "INVALID")
+  field(FVSV, "INVALID")
+  field(SXSV, "INVALID")
+  field(SVSV, "INVALID")
+  field(EISV, "INVALID")
+  field(NISV, "INVALID")
+  field(TESV, "INVALID")
+  field(ELSV, "INVALID")
+  field(TVSV, "INVALID")
+  field(TTSV, "INVALID")
+  field(FTSV, "INVALID")
+  field(FFSV, "INVALID")
+  field(UNSV, "INVALID")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+
+# Running dose sums for different time intervals
+
+record(calc, "$(P)DoseRate:S-I") {
+  field(INPA, "$(P)DoseRate-I MSS NPP")
+  field(INPB, "3600")
+  field(CALC, "A>0?A/B:0")
+  field(PREC, "6")
+  field(HOPR, "500")
+  field(LOPR, "0")
+  field(EGU , "mR/s")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+# 1 min sum
+
+record(aSub, "$(P)Dose:1m-Calc_") {
+  field(INAM, "InitTimedBuffer")
+  field(SNAM, "ProcTimedBuffer")
+  field(FTA , "DOUBLE") # Input value
+  field(FTB , "DOUBLE") # Time interval (sec)
+  field(FTC , "UCHAR")  # 1==Reset
+  field(FTVA, "DOUBLE") # Sum
+  field(FTVB, "ULONG")  # Invalid Count
+  field(FTVC, "ULONG")  # Total Count
+  field(INPA, "$(P)DoseRate:S-I")
+  field(INPB, "60")
+  field(INPC, "0")
+  field(OUTA, "$(P)Dose:1m-I PP MSS")
+  field(OUTB, "$(P)Cnt:1mBad-I PP MSS")
+  field(OUTC, "$(P)Cnt:1mTot-I PP MSS")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(ai, "$(P)Dose:1m-I") {
+  field(PREC, "3")
+  field(ADEL, "0.002")
+  field(EGU , "mR")
+  field(HOPR, "15")
+  field(LOPR, "0")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(longin, "$(P)Cnt:1mBad-I") {
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(longin, "$(P)Cnt:1mTot-I") {
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+# 5 min sum
+
+record(aSub, "$(P)Dose:5m-Calc_") {
+  field(INAM, "InitTimedBuffer")
+  field(SNAM, "ProcTimedBuffer")
+  field(FTA , "DOUBLE") # Input value
+  field(FTB , "DOUBLE") # Time interval (sec)
+  field(FTC , "UCHAR")  # 1==Reset
+  field(FTVA, "DOUBLE") # Sum
+  field(FTVB, "ULONG")  # Invalid Count
+  field(FTVC, "ULONG")  # Total Count
+  field(INPA, "$(P)DoseRate:S-I")
+  field(INPB, "300")
+  field(INPC, "0")
+  field(OUTA, "$(P)Dose:5m-I PP MSS")
+  field(OUTB, "$(P)Cnt:5mBad-I PP MSS")
+  field(OUTC, "$(P)Cnt:5mTot-I PP MSS")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(ai, "$(P)Dose:5m-I") {
+  field(PREC, "3")
+  field(ADEL, "0.002")
+  field(EGU , "mR")
+  field(HOPR, "15")
+  field(LOPR, "0")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(longin, "$(P)Cnt:5mBad-I") {
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(longin, "$(P)Cnt:5mTot-I") {
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+# 1 hour sum
+
+record(aSub, "$(P)Dose:1h-Calc_") {
+  field(INAM, "InitTimedBuffer")
+  field(SNAM, "ProcTimedBuffer")
+  field(FTA , "DOUBLE") # Input value
+  field(FTB , "DOUBLE") # Time interval (sec)
+  field(FTC , "UCHAR")  # 1==Reset
+  field(FTVA, "DOUBLE") # Sum
+  field(FTVB, "ULONG")  # Invalid Count
+  field(FTVC, "ULONG")  # Total Count
+  field(INPA, "$(P)DoseRate:S-I")
+  field(INPB, "3600")
+  field(INPC, "0")
+  field(OUTA, "$(P)Dose:1h-I PP MSS")
+  field(OUTB, "$(P)Cnt:1hBad-I PP MSS")
+  field(OUTC, "$(P)Cnt:1hTot-I PP MSS")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(ai, "$(P)Dose:1h-I") {
+  field(PREC, "3")
+  field(ADEL, "0.002")
+  field(EGU , "mR")
+  field(HOPR, "15")
+  field(LOPR, "0")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(longin, "$(P)Cnt:1hBad-I") {
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(longin, "$(P)Cnt:1hTot-I") {
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+# 1 day sum
+
+record(aSub, "$(P)Dose:1d-Calc_") {
+  field(INAM, "InitTimedBuffer")
+  field(SNAM, "ProcTimedBuffer")
+  field(FTA , "DOUBLE") # Input value
+  field(FTB , "DOUBLE") # Time interval (sec)
+  field(FTC , "UCHAR")  # 1==Reset
+  field(FTVA, "DOUBLE") # Sum
+  field(FTVB, "ULONG")  # Invalid Count
+  field(FTVC, "ULONG")  # Total Count
+  field(INPA, "$(P)DoseRate:S-I")
+  field(INPB, "86400")
+  field(INPC, "0")
+  field(OUTA, "$(P)Dose:1d-I PP MSS")
+  field(OUTB, "$(P)Cnt:1dBad-I PP MSS")
+  field(OUTC, "$(P)Cnt:1dTot-I PP MSS")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(ai, "$(P)Dose:1d-I") {
+  field(PREC, "3")
+  field(ADEL, "0.002")
+  field(EGU , "mR")
+  field(HOPR, "15")
+  field(LOPR, "0")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(longin, "$(P)Cnt:1dBad-I") {
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(longin, "$(P)Cnt:1dTot-I") {
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}

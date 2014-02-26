@@ -1,0 +1,120 @@
+
+Testing process
+===============
+
+Initial testing uses the hpisim2.py software device simulation.
+
+# Start IOC after simulation is running.
+
+=== Value tests ===
+
+# Step simulation dose rates from -0.05 through 8388607 mR/h (0x7fffff)
+## verify that $(P)DoseRate-I gives the same value +-0.005
+
+# Change simulation alarm levels
+## verify that $(P)Lvl:*-I PVs change accordingly.
+
+# For both low and high alarm levels.  Set simulation dose rate to level + 0.01.
+## Verify that $(P)Alrm:Low/High-Sts alarms become active.
+    When over the low limit only $(P)Alrm:Low-Sts is active.  When over high limit,
+    both are active.
+## Verify $(P)Alarm:Sum-Sts signals appropriate severity (MINOR for low and MAJOR for high)
+
+# Return the dose rate to 0
+## Verify that alarms clear
+
+# Reduce simulation dose rate to -0.05
+## Verify that the fail holdoff counter begins counting down
+## Verify that $(P)Alrm:Fail-Sts becomes active when the counter reaches zero.
+
+# Return the dose rate to 0
+## Verify that $(P)Alrm:Fail-Sts clears
+## Verify that the fail holdoff counter returns to its initial value (eg. 60)
+
+# Uncheck HPV Test Pass
+## Verify that $(P)Alrm:Pulse-Sts becomes active
+
+# Check HPV Test Pass
+## Verify that $(P)Alrm:Pulse-Sts clears.
+
+=== Dose sum test ===
+
+# Set simulation dose rate to 1 mR/h and restart IOC to clear dose sums.
+## When $(P)Cnt:1mTot-I reaches 60 verify that $(P)Dose:1m-I reads 0.017 mR
+## When $(P)Cnt:5mTot-I reaches 300 verify that $(P)Dose:5m-I reads 0.083 mR
+## When $(P)Cnt:1hTot-I reaches 3600 verify that $(P)Dose:1h-I reads 1.0 mR
+## When $(P)Cnt:1dTot-I reaches 86400 verify that $(P)Dose:1d-I reads 24.0 mR
+## Verify that all $(P)Cnt:*Bad-I read 0.
+
+=== Communication tests ===
+
+# Stop simulation.
+## Verify immediate disconnect and comm alarms when simulation stops.
+## Verify that all $(P)Cnt:*Bad-I increment by 1 immediately, and continue to count
+   once for each connection attempt (~5 seconds).
+## Verify that data update counter stops incrementing
+## Verify that the following PVs immediately show an INVALID alarm
+  $(P)DoseRate-I
+  all $(P)Alrm:*-Sts  (except $(P)Alrm:Comm-Sts)
+  all $(P)Lvl:*-I
+## Verify that the following PVs immediately show an MAJOR alarm
+  $(P)Connect-Sts
+  $(P)Valid-Sts
+  $(P)Alrm:Comm-Sts
+  $(P)Msg-I
+##After 60 seconds verify that $(P)Dose:1m-I shows an INVALID alarm
+   and $(P)Cnt:1mTot-I == $(P)Cnt:1mBad-I
+
+# Re-start simulation
+## Verify reconnection.  Alarms should clear and data update counter should resume counting
+## Repeat Value tests
+
+# Stop both simulation and IOC.  Start IOC only.
+## Verify INVALID and MAJOR alarms are active as in previous step.
+
+# Start simulation
+## Verify that alarms clear and update counter starts incrementing.
+## Repeat Value tests
+
+# Check Pause Tx
+## Verify that update counter stops immediately
+## After timeout period (eg 10 sec.) verify that INVALID and MAJOR alarms
+  are active as in previous step.
+## Verify that $(P)Connect-Sts alarm clears with each successful connection,
+  and becomes active again with each subsequent timeout.  Observe at least 3 cycles.
+
+# Uncheck Pause Tx
+## Verify that alarms clear and update counter starts incrementing.
+## Repeat Value tests
+
+# Click Inject fault at random for some time.  Vary rate.
+## Verify that alarms except $(P)Connect-Sts become active
+
+# Stop clicking Inject fault
+## Verify that alarms clear and normal operation resumes.
+## Repeat Value tests
+
+# Check Pause Tx, then begin slowing clicking Inject byte at least once, but no more than 20 times, per timeout period.  Repeat at least 3 times.
+## Verify that alarms except $(P)Connect-Sts become active within 1 timeout period.
+
+# Uncheck Pause Tx
+## Verify that alarms clear and update counter starts incrementing.
+## Repeat Value tests
+
+
+=== Bench test with real device ===
+
+# Power ARM then start IOC
+## Run Value tests
+
+# Disconnect Ethernet cable and wait for timeout.
+## Verify alarms
+
+# Reconnect Ethernet cable
+## Verify recovery
+
+# Remove power from ARM
+## Verify alarms
+
+# Power on ARM
+## Verify recovery

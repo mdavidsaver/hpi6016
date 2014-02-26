@@ -1,0 +1,13 @@
+registrar(ARMRegistrar)
+registrar(timedbufferRegister)
+variable(ARMDebug,int)
+variable(ARMTimeout,int)
+driver(drvARM)
+
+device(bi, INST_IO, devARMReadConnectedbi, "ARM Connected")
+device(bi, INST_IO, devARMReadValidbi, "ARM Valid")
+
+device(ai, INST_IO, devARMReadParamai, "ARM Read Param")
+device(longin, INST_IO, devARMReadParamlongin, "ARM Read Param")
+device(mbbiDirect, INST_IO, devARMReadParammbbiDirect, "ARM Read Param")
+device(waveform, INST_IO, devARMLastMsgwaveform, "ARM Last Msg")
