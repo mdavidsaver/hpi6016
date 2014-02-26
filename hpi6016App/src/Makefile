@@ -13,7 +13,7 @@ PROD_IOC = hpi6016
 DBD += hpi6016.dbd
 
 # hpi6016.dbd will be made up from these files:
-hpi6016_DBD += base.dbd
+hpi6016_DBD += base.dbd asSupport.dbd devIocStats.dbd system.dbd
 
 # Include dbd files from all support applications:
 hpi6016_DBD += hpi6016Support.dbd
@@ -33,6 +33,12 @@ hpi6016_SRCS_vxWorks += -nil-
 
 # Finally link to the EPICS Base libraries
 hpi6016_LIBS += $(EPICS_BASE_IOC_LIBS)
+hpi6016_LIBS += autosave devIocStats
+
+ifneq ($(CAPUTLOG),)
+PROD_LIBS += caPutLog
+COMM_DBD += caPutLog.dbd
+endif
 
 #===========================
 

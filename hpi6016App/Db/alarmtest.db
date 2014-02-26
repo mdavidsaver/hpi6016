@@ -1,0 +1,132 @@
+# Alarm test board
+
+record(bo, "$(P)Alrm:Comm-Sts") {
+  field(PINI, "YES")
+  field(ZNAM, "Normal")
+  field(ONAM, "Timeout")
+  field(OSV,  "MAJOR")
+  field(UDF,  "0")
+  field(ASG, "OPERATOR")
+  field(FLNK, "$(P)Alrm:Comm-Sts_")
+}
+
+record(bi, "$(P)Alrm:Comm-Sts_") {
+  field(INP , "$(P)Alrm:Comm-Sts NPP")
+  field(ZNAM, "Normal")
+  field(ONAM, "Timeout")
+  field(OSV,  "INVALID")
+}
+
+#record(ai, "$(P)DoseRate-I") {
+#    field(PREC, "2")
+#    field(HOPR, "500")
+#    field(LOPR, "-0.5")
+#    field(EGU , "mR/h")
+#}
+
+record(bo, "$(P)Alrm:1-Sts") {
+  field(PINI, "YES")
+  field(SDIS, "$(P)Alrm:Comm-Sts_ CP MSS")
+  field(DISV, "-42")
+  field(ZNAM, "Normal")
+  field(ONAM, "Trip")
+  field(UDF,  "0")
+  field(OSV , "MAJOR")
+  field(ASG, "OPERATOR")
+  alias("$(P)Alrm:High-Sts")
+}
+
+record(bo, "$(P)Alrm:2-Sts") {
+  field(PINI, "YES")
+  field(SDIS, "$(P)Alrm:Comm-Sts_ CP MSS")
+  field(DISV, "-42")
+  field(ZNAM, "Normal")
+  field(ONAM, "Trip")
+  field(OSV , "MINOR")
+  field(UDF,  "0")
+  field(ASG, "OPERATOR")
+  alias("$(P)Alrm:Low-Sts")
+}
+
+record(bo, "$(P)Alrm:3-Sts") {
+  field(PINI, "YES")
+  field(SDIS, "$(P)Alrm:Comm-Sts_ CP MSS")
+  field(DISV, "-42")
+  field(ZNAM, "Normal")
+  field(ONAM, "Trip")
+  field(OSV , "MAJOR")
+  field(UDF,  "0")
+  field(ASG, "OPERATOR")
+}
+
+record(bo, "$(P)Alrm:Fail-Sts") {
+  field(PINI, "YES")
+  field(SDIS, "$(P)Alrm:Comm-Sts_ CP MSS")
+  field(DISV, "-42")
+  field(ZNAM, "Normal")
+  field(ONAM, "Fail")
+  field(OSV , "MAJOR")
+  field(UDF,  "0")
+  field(ASG, "OPERATOR")
+}
+
+record(bo, "$(P)Alrm:Oflow-Sts") {
+  field(PINI, "YES")
+  field(SDIS, "$(P)Alrm:Comm-Sts_ CP MSS")
+  field(DISV, "-42")
+  field(ZNAM, "Normal")
+  field(ONAM, "Overflow")
+  field(OSV , "MAJOR")
+  field(UDF,  "0")
+  field(ASG, "OPERATOR")
+}
+
+record(bo, "$(P)Alrm:Pulse-Sts") {
+  field(PINI, "YES")
+  field(SDIS, "$(P)Alrm:Comm-Sts_ CP MSS")
+  field(DISV, "-42")
+  field(ZNAM, "Normal")
+  field(ONAM, "Fail")
+  field(OSV , "MAJOR")
+  field(UDF,  "0")
+  field(ASG, "OPERATOR")
+}
+
+
+
+# Summarize alarms from a single detector
+
+record(calcout, "$(P)Alrm:Sum-Sts_") {
+  field(INPA, "$(P)Alrm:Low-Sts CP")
+  field(INPB, "$(P)Alrm:High-Sts CP")
+  field(INPC, "$(P)Alrm:Pulse-Sts CP")
+  field(INPD, "$(P)Alrm:Fail-Sts CP")
+  field(INPE, "$(P)Alrm:Comm-Sts CP")
+  field(CALC, "E?3:(B||C||D)?2:A?1:0")
+  field(OUT , "$(P)Alrm:Sum-Sts PP")
+  field(IVOA, "Set output to IVOV")
+  field(IVOV, "3")
+}
+
+record(mbbi, "$(P)Alrm:Sum-Sts") {
+  field(ZRST, "Normal")
+  field(ONST, "Warning")
+  field(TWST, "Alarm")
+  field(THST, "Comm.")
+  field(ONSV, "MINOR")
+  field(TWSV, "MAJOR")
+  field(THSV, "INVALID")
+  field(FRSV, "INVALID")
+  field(FVSV, "INVALID")
+  field(SXSV, "INVALID")
+  field(SVSV, "INVALID")
+  field(EISV, "INVALID")
+  field(NISV, "INVALID")
+  field(TESV, "INVALID")
+  field(ELSV, "INVALID")
+  field(TVSV, "INVALID")
+  field(TTSV, "INVALID")
+  field(FTSV, "INVALID")
+  field(FFSV, "INVALID")
+  field(UNSV, "INVALID")
+}
