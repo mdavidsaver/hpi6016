@@ -78,15 +78,15 @@ dbLoadRecords("../../db/HPI6016.db",  "P=SR:C29-AM{RadMon:ID},PORT=SRM_ID_29")
 dbLoadRecords("../../db/HPI6016.db",  "P=SR:C30-AM{RadMon:ID},PORT=SRM_ID_30")
 
 ## Load record instances
-dbLoadRecords("db/HPI6016.db","P=TST{RadMon:X},PORT=sim")
+#dbLoadRecords("db/HPI6016.db","P=TST{RadMon:X},PORT=sim")
 
-dbLoadRecords("../../db/alarmtest.db","P=SR-AM{RadMon:Tst}")
+#dbLoadRecords("../../db/alarmtest.db","P=SR-AM{RadMon:Tst}")
 
-dbLoadRecords("../../db/iocAdminSoft.db", "IOC=AM-PPS-CT{IOC:RadMonSR}")
-dbLoadRecords ("../../db/save_restoreStatus.db","P=AM-PPS-CT{IOC:RadMonSR}")
+dbLoadRecords("../../db/iocAdminSoft.db", "IOC=AM-PPS-CT{IOC:RadMonACC}")
+dbLoadRecords ("../../db/save_restoreStatus.db","P=AM-PPS-CT{IOC:RadMonACC}")
 save_restoreSet_status_prefix("AM-PPS-CT{IOC:RadMonSR}")
 
-asSetFilename("/cf-update/acf/default.acf")
+asSetFilename("/cf-update/acf/restrict.acf")
 
 #Autosave/Restore machinery
 
