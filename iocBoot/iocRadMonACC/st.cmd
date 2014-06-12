@@ -15,6 +15,25 @@ hpi6016_registerRecordDeviceDriver(pdbbase)
 
 #var("ARMDebug","3")
 
+ARMInit("HPI_Linac_1", "10.0.135.180:4001")
+ARMInit("HPI_Linac_2", "10.0.135.181:4001")
+ARMInit("HPI_Linac_3", "10.0.135.182:4001")
+ARMInit("HPI_Linac_4", "10.0.135.183:4001")
+
+ARMInit("HPI_Boost_1", "10.0.135.184:4001")
+ARMInit("HPI_Boost_2", "10.0.135.185:4001")
+ARMInit("HPI_Boost_3", "10.0.135.186:4001")
+ARMInit("HPI_Boost_4", "10.0.135.187:4001")
+
+ARMInit("HPI_Boost_5", "10.0.135.176:4001")
+ARMInit("HPI_Boost_6", "10.0.135.177:4001")
+ARMInit("HPI_Boost_7", "10.0.135.178:4001")
+
+ARMInit("HPI_Boost_8", "10.0.148.1:4001")
+ARMInit("HPI_Boost_9", "10.0.148.2:4001")
+ARMInit("HPI_Boost_A", "10.0.148.3:4001")
+ARMInit("HPI_Boost_B", "10.0.148.4:4001")
+
 ARMInit("SRM_ID_01", "10.0.148.10:4001")
 ARMInit("SRM_ID_02", "10.0.148.20:4001")
 ARMInit("SRM_ID_03", "10.0.148.30:4001")
@@ -45,6 +64,24 @@ ARMInit("SRM_ID_27", "10.0.149.30:4001")
 ARMInit("SRM_ID_28", "10.0.149.40:4001")
 ARMInit("SRM_ID_29", "10.0.149.50:4001")
 ARMInit("SRM_ID_30", "10.0.149.60:4001")
+
+dbLoadRecords("../../db/HPI6016.db","P=LN-AM{RadMon:1},PORT=HPI_Linac_1")
+dbLoadRecords("../../db/HPI6016.db","P=LN-AM{RadMon:2},PORT=HPI_Linac_2")
+dbLoadRecords("../../db/HPI6016.db","P=LN-AM{RadMon:3},PORT=HPI_Linac_3")
+dbLoadRecords("../../db/HPI6016.db","P=LN-AM{RadMon:4},PORT=HPI_Linac_4")
+
+dbLoadRecords("../../db/HPI6016.db","P=BR-AM{RadMon:01},PORT=HPI_Boost_1")
+dbLoadRecords("../../db/HPI6016.db","P=BR-AM{RadMon:02},PORT=HPI_Boost_2")
+dbLoadRecords("../../db/HPI6016.db","P=BR-AM{RadMon:03},PORT=HPI_Boost_3")
+dbLoadRecords("../../db/HPI6016.db","P=BR-AM{RadMon:04},PORT=HPI_Boost_4")
+dbLoadRecords("../../db/HPI6016.db","P=BR-AM{RadMon:05},PORT=HPI_Boost_5")
+dbLoadRecords("../../db/HPI6016.db","P=BR-AM{RadMon:06},PORT=HPI_Boost_6")
+dbLoadRecords("../../db/HPI6016.db","P=BR-AM{RadMon:07},PORT=HPI_Boost_7")
+
+dbLoadRecords("../../db/HPI6016.db","P=BR-AM{RadMon:08},PORT=HPI_Boost_8")
+dbLoadRecords("../../db/HPI6016.db","P=BR-AM{RadMon:09},PORT=HPI_Boost_9")
+dbLoadRecords("../../db/HPI6016.db","P=BR-AM{RadMon:10},PORT=HPI_Boost_A")
+dbLoadRecords("../../db/HPI6016.db","P=BR-AM{RadMon:11},PORT=HPI_Boost_B")
 
 dbLoadRecords("../../db/HPI6016.db",  "P=SR:C01-AM{RadMon:ID},PORT=SRM_ID_01")
 dbLoadRecords("../../db/HPI6016.db",  "P=SR:C02-AM{RadMon:ID},PORT=SRM_ID_02")
@@ -80,11 +117,12 @@ dbLoadRecords("../../db/HPI6016.db",  "P=SR:C30-AM{RadMon:ID},PORT=SRM_ID_30")
 ## Load record instances
 #dbLoadRecords("db/HPI6016.db","P=TST{RadMon:X},PORT=sim")
 
+dbLoadRecords("../../db/alarmtest.db","P=BR-AM{RadMon:Tst}")
 #dbLoadRecords("../../db/alarmtest.db","P=SR-AM{RadMon:Tst}")
 
 dbLoadRecords("../../db/iocAdminSoft.db", "IOC=AM-PPS-CT{IOC:RadMonACC}")
 dbLoadRecords ("../../db/save_restoreStatus.db","P=AM-PPS-CT{IOC:RadMonACC}")
-save_restoreSet_status_prefix("AM-PPS-CT{IOC:RadMonSR}")
+save_restoreSet_status_prefix("AM-PPS-CT{IOC:RadMonACC}")
 
 asSetFilename("/cf-update/acf/restrict.acf")
 

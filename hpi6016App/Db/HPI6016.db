@@ -6,7 +6,7 @@ record(ai, "$(P)DoseRate-I") {
     field(LINR, "LINEAR")
     field(ESLO, "1e-2")
     field(PREC, "2")
-    field(ADEL, "0.05")
+    field(ADEL, "0.02")
     field(HOPR, "500")
     field(LOPR, "-0.5")
     field(EGU , "mR/h")
@@ -164,7 +164,7 @@ record(calc, "$(P)Itvl:Data-I") {
   field(INPB, "$(P)DataTime2-I_ NPP")
   field(CALC, "A-B")
   field(FLNK, "$(P)DataTime2-I_")
-  field(ADEL, "0.002")
+  field(ADEL, "0.0001")
   field(PREC, "3")
   field(EGU , "s")
   field(TSEL, "$(P)DoseRate-I.TIME")
@@ -302,7 +302,7 @@ record(aSub, "$(P)Dose:1m-Calc_") {
 
 record(ai, "$(P)Dose:1m-I") {
   field(PREC, "3")
-  field(ADEL, "0.002")
+  field(ADEL, "0.0001")
   field(EGU , "mR")
   field(HOPR, "15")
   field(LOPR, "0")
@@ -339,7 +339,7 @@ record(aSub, "$(P)Dose:5m-Calc_") {
 
 record(ai, "$(P)Dose:5m-I") {
   field(PREC, "3")
-  field(ADEL, "0.002")
+  field(ADEL, "0.0001")
   field(EGU , "mR")
   field(HOPR, "15")
   field(LOPR, "0")
@@ -376,7 +376,7 @@ record(aSub, "$(P)Dose:1h-Calc_") {
 
 record(ai, "$(P)Dose:1h-I") {
   field(PREC, "3")
-  field(ADEL, "0.002")
+  field(ADEL, "0.0001")
   field(EGU , "mR")
   field(HOPR, "15")
   field(LOPR, "0")
@@ -413,7 +413,7 @@ record(aSub, "$(P)Dose:1d-Calc_") {
 
 record(ai, "$(P)Dose:1d-I") {
   field(PREC, "3")
-  field(ADEL, "0.002")
+  field(ADEL, "0.0001")
   field(EGU , "mR")
   field(HOPR, "15")
   field(LOPR, "0")
