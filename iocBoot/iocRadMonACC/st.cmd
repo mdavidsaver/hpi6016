@@ -65,6 +65,13 @@ ARMInit("SRM_ID_28", "10.0.149.40:4001")
 ARMInit("SRM_ID_29", "10.0.149.50:4001")
 ARMInit("SRM_ID_30", "10.0.149.60:4001")
 
+ARMInit("FRM_ID_03", "10.0.148.31:4001")
+ARMInit("FRM_ID_05", "10.0.148.51:4001")
+ARMInit("FRM_ID_10", "10.0.148.101:4001")
+ARMInit("FRM_ID_11", "10.0.148.111:4001")
+ARMInit("FRM_ID_23", "10.0.148.231:4001")
+ARMInit("FRM_ID_28", "10.0.149.41:4001")
+
 dbLoadRecords("../../db/HPI6016.db","P=LN-AM{RadMon:1},PORT=HPI_Linac_1")
 dbLoadRecords("../../db/HPI6016.db","P=LN-AM{RadMon:2},PORT=HPI_Linac_2")
 dbLoadRecords("../../db/HPI6016.db","P=LN-AM{RadMon:3},PORT=HPI_Linac_3")
@@ -113,6 +120,13 @@ dbLoadRecords("../../db/HPI6016.db",  "P=SR:C27-AM{RadMon:ID},PORT=SRM_ID_27")
 dbLoadRecords("../../db/HPI6016.db",  "P=SR:C28-AM{RadMon:ID},PORT=SRM_ID_28")
 dbLoadRecords("../../db/HPI6016.db",  "P=SR:C29-AM{RadMon:ID},PORT=SRM_ID_29")
 dbLoadRecords("../../db/HPI6016.db",  "P=SR:C30-AM{RadMon:ID},PORT=SRM_ID_30")
+
+dbLoadRecords("../../db/HPI6016.db",  "P=XF:03IDA-AM{RadMon:1},PORT=FRM_ID_03")
+dbLoadRecords("../../db/HPI6016.db",  "P=XF:05IDA-AM{RadMon:1},PORT=FRM_ID_05")
+dbLoadRecords("../../db/HPI6016.db",  "P=XF:10IDA-AM{RadMon:1},PORT=FRM_ID_10")
+dbLoadRecords("../../db/HPI6016.db",  "P=XF:11IDA-AM{RadMon:1},PORT=FRM_ID_11")
+dbLoadRecords("../../db/HPI6016.db",  "P=XF:23IDA-AM{RadMon:1},PORT=FRM_ID_23")
+dbLoadRecords("../../db/HPI6016.db",  "P=XF:28IDA-AM{RadMon:1},PORT=FRM_ID_28")
 
 ## Load record instances
 #dbLoadRecords("db/HPI6016.db","P=TST{RadMon:X},PORT=sim")
