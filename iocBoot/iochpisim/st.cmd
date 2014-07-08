@@ -1,4 +1,4 @@
-#!../../bin/linux-x86-debug/hpi6016
+#!../../bin/linux-x86_64-debug/hpi6016
 
 ## You may have to change hpi6016 to something else
 ## everywhere it appears in this file

@@ -19,26 +19,25 @@ record(fanout, "$(P)Update:1-FOut_") {
     field(LNK2, "$(P)Lvl:2-I")
     field(LNK3, "$(P)Lvl:3-I")
     field(LNK4, "$(P)Cnt:Fail-I")
-    field(LNK5, "$(P)Stat-Sts")
-    field(LNK6, "$(P)Connect-Sts")
+    field(LNK5, "$(P)Connect-Sts")
+    field(LNK6, "$(P)DataTime-I_")
     field(FLNK, "$(P)Update:2-FOut_")
     field(TSEL, "$(P)DoseRate-I.TIME")
 }
 
 record(fanout, "$(P)Update:2-FOut_") {
-    field(LNK1, "$(P)DataTime-I_")
-    field(FLNK, "$(P)Update:3-FOut_")
-    field(TSEL, "$(P)DoseRate-I.TIME")
-}
-
-# breaks up bits found in $(P)Stat-Sts
-record(fanout, "$(P)Update:3-FOut_") {
     field(LNK1, "$(P)Alrm:1-Sts")
     field(LNK2, "$(P)Alrm:2-Sts")
     field(LNK3, "$(P)Alrm:3-Sts")
     field(LNK4, "$(P)Alrm:Fail-Sts")
     field(LNK5, "$(P)Alrm:Oflow-Sts")
     field(LNK6, "$(P)Alrm:Pulse-Sts")
+    field(FLNK, "$(P)Update:3-FOut_")
+    field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+# breaks up bits found in $(P)Stat-Sts
+record(fanout, "$(P)Update:3-FOut_") {
     field(FLNK, "$(P)Update:4-FOut_")
     field(TSEL, "$(P)DoseRate-I.TIME")
 }
@@ -96,16 +95,9 @@ record(longin, "$(P)Cnt:Fail-I") {
     field(TSEL, "$(P)DoseRate-I.TIME")
 }
 
-record(mbbiDirect, "$(P)Stat-Sts") {
-    field(DTYP, "ARM Read Param")
-    field(INP , "@$(PORT) Bits")
-    field(DESC, "Raw status byte")
-    field(TSEL, "$(P)DoseRate-I.TIME")
-}
-
 record(bi, "$(P)Connect-Sts") {
-    field(DTYP, "ARM Connected")
-    field(INP , "@$(PORT)")
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) Connected")
     field(ZNAM, "Disconnect")
     field(ONAM, "Connect")
     field(ZSV , "MAJOR")
@@ -114,8 +106,8 @@ record(bi, "$(P)Connect-Sts") {
 }
 
 record(bi, "$(P)Valid-Sts") {
-    field(DTYP, "ARM Valid")
-    field(INP , "@$(PORT)")
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) Valid")
     field(ZNAM, "OK")
     field(ONAM, "No Data")
     field(OSV , "MAJOR")
@@ -178,7 +170,8 @@ record(ai, "$(P)DataTime2-I_") {
 # Break out bits from $(P)Stat-Sts
 
 record(bi, "$(P)Alrm:1-Sts") {
-  field(INP , "$(P)Stat-Sts.B0 NPP MSS")
+  field(DTYP, "ARM Read Param")
+  field(INP , "@$(PORT) AlrmHigh")
   field(ZNAM, "Normal")
   field(ONAM, "Trip")
   field(OSV , "MAJOR")
@@ -187,7 +180,8 @@ record(bi, "$(P)Alrm:1-Sts") {
 }
 
 record(bi, "$(P)Alrm:2-Sts") {
-  field(INP , "$(P)Stat-Sts.B1 NPP MSS")
+  field(DTYP, "ARM Read Param")
+  field(INP , "@$(PORT) AlrmLow")
   field(ZNAM, "Normal")
   field(ONAM, "Trip")
   field(OSV , "MINOR")
@@ -196,7 +190,8 @@ record(bi, "$(P)Alrm:2-Sts") {
 }
 
 record(bi, "$(P)Alrm:3-Sts") {
-  field(INP , "$(P)Stat-Sts.B2 NPP MSS")
+  field(DTYP, "ARM Read Param")
+  field(INP , "@$(PORT) Alrm3")
   field(ZNAM, "Normal")
   field(ONAM, "Trip")
   field(OSV , "MAJOR")
@@ -204,7 +199,8 @@ record(bi, "$(P)Alrm:3-Sts") {
 }
 
 record(bi, "$(P)Alrm:Fail-Sts") {
-  field(INP , "$(P)Stat-Sts.B3 NPP MSS")
+  field(DTYP, "ARM Read Param")
+  field(INP , "@$(PORT) AlrmFail")
   field(ZNAM, "Normal")
   field(ONAM, "Fail")
   field(OSV , "MAJOR")
@@ -212,7 +208,8 @@ record(bi, "$(P)Alrm:Fail-Sts") {
 }
 
 record(bi, "$(P)Alrm:Oflow-Sts") {
-  field(INP , "$(P)Stat-Sts.B4 NPP MSS")
+  field(DTYP, "ARM Read Param")
+  field(INP , "@$(PORT) AlrmOFlowRate")
   field(ZNAM, "Normal")
   field(ONAM, "Overflow")
   field(OSV , "MAJOR")
@@ -220,7 +217,8 @@ record(bi, "$(P)Alrm:Oflow-Sts") {
 }
 
 record(bi, "$(P)Alrm:Pulse-Sts") {
-  field(INP , "$(P)Stat-Sts.B6 NPP MSS")
+  field(DTYP, "ARM Read Param")
+  field(INP , "@$(PORT) AlrmHVPFail")
   field(ZNAM, "Normal")
   field(ONAM, "Fail")
   field(OSV , "MAJOR")
