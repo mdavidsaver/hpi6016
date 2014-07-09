@@ -10,6 +10,19 @@ record(ai, "$(P)DoseRate-I") {
     field(HOPR, "500")
     field(LOPR, "-0.5")
     field(EGU , "mR/h")
+    field(FLNK, "$(P)Dose-I")
+}
+
+record(ai, "$(P)Dose-I") {
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) Dose")
+    field(LINR, "LINEAR")
+    field(ESLO, "1e-2")
+    field(PREC, "2")
+    field(ADEL, "0.05")
+    field(HOPR, "500")
+    field(LOPR, "-0.5")
+    field(EGU , "mR")
     field(FLNK, "$(P)Update:1-FOut_")
 }
 
@@ -38,6 +51,9 @@ record(fanout, "$(P)Update:2-FOut_") {
 
 # breaks up bits found in $(P)Stat-Sts
 record(fanout, "$(P)Update:3-FOut_") {
+    field(LNK1, "$(P)Test:Pulse-Sts")
+    field(LNK2, "$(P)Alrm:TotOflow-Sts")
+    field(LNK3, "$(P)Alrm:BuckOflow-Sts")
     field(FLNK, "$(P)Update:4-FOut_")
     field(TSEL, "$(P)DoseRate-I.TIME")
 }
@@ -50,7 +66,28 @@ record(fanout, "$(P)Update:4-FOut_") {
     field(LNK4, "$(P)Dose:5m-Calc_")
     field(LNK5, "$(P)Dose:1h-Calc_")
     field(LNK6, "$(P)Dose:1d-Calc_")
+    field(FLNK, "$(P)Update:5-FOut_")
     field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(fanout, "$(P)Update:5-FOut_") {
+    field(LNK1, "$(P)Ver:Comm-I")
+    field(LNK2, "$(P)Num:EEBytes-I")
+}
+
+record(mbbi, "$(P)Ver:Comm-I") {
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) CommVer")
+    field(NOBT, "2")
+    field(ONVL, "1")
+    field(ONST, "Ver 1")
+    field(TWVL, "2")
+    field(TWST, "Ver 2")
+}
+
+record(longin, "$(P)Num:EEBytes-I") {
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) NumEEBytes")
 }
 
 record(ai, "$(P)Lvl:1-I") {
@@ -216,12 +253,50 @@ record(bi, "$(P)Alrm:Oflow-Sts") {
   field(TSEL, "$(P)DoseRate-I.TIME")
 }
 
-record(bi, "$(P)Alrm:Pulse-Sts") {
+record(bi, "$(P)Alrm:Oflow-Sts") {
+  field(DESC, "Dose rate overflow")
   field(DTYP, "ARM Read Param")
-  field(INP , "@$(PORT) AlrmHVPFail")
+  field(INP , "@$(PORT) AlrmOFlowRate")
+  field(ZNAM, "Normal")
+  field(ONAM, "Overflow")
+  field(OSV , "MAJOR")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(bi, "$(P)Alrm:TotOflow-Sts") {
+  field(DESC, "Dose total overflow")
+  field(DTYP, "ARM Read Param")
+  field(INP , "@$(PORT) AlrmOFlowDose")
+  field(ZNAM, "Normal")
+  field(ONAM, "Overflow")
+  field(OSV , "MAJOR")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(bi, "$(P)Alrm:BuckOflow-Sts") {
+  field(DESC, "Dose int. bucket overflow")
+  field(DTYP, "ARM Read Param")
+  field(INP , "@$(PORT) AlrmOFlowBuck")
   field(ZNAM, "Normal")
   field(ONAM, "Fail")
   field(OSV , "MAJOR")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(bi, "$(P)Alrm:Pulse-Sts") {
+  field(DTYP, "ARM Read Param")
+  field(INP , "@$(PORT) AlrmHVPFail")
+  field(ZNAM, "Idle")
+  field(ONAM, "Run")
+  field(OSV , "MINOR")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(bi, "$(P)Test:Pulse-Sts") {
+  field(DTYP, "ARM Read Param")
+  field(INP , "@$(PORT) AlrmHVPRun")
+  field(ZNAM, "Idle")
+  field(ONAM, "Run")
   field(TSEL, "$(P)DoseRate-I.TIME")
 }
 

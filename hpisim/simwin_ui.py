@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'simwin.ui'
 #
-# Created: Tue Jul  8 12:23:10 2014
+# Created: Wed Jul  9 11:19:46 2014
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -107,9 +107,9 @@ class Ui_simwin(object):
         self.label_6.setAlignment(QtCore.Qt.AlignCenter)
         self.label_6.setObjectName(_fromUtf8("label_6"))
         self.verticalLayout_3.addWidget(self.label_6)
-        self.tableView = QtGui.QTableView(self.centralwidget)
-        self.tableView.setObjectName(_fromUtf8("tableView"))
-        self.verticalLayout_3.addWidget(self.tableView)
+        self.eeprom = QtGui.QTableView(self.centralwidget)
+        self.eeprom.setObjectName(_fromUtf8("eeprom"))
+        self.verticalLayout_3.addWidget(self.eeprom)
         self.horizontalLayout_2.addLayout(self.verticalLayout_3)
         self.verticalLayout_4.addLayout(self.horizontalLayout_2)
         self.horizontalLayout = QtGui.QHBoxLayout()

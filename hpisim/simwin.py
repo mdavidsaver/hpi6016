@@ -17,10 +17,42 @@ class SockHandler(QtCore.QObject):
         P.socks.remove(self)
         P.updateNConn()
 
-class eeprom(QtGui.QStandardItemModel):
+class eeprom(QtCore.QAbstractTableModel):
     def __init__(self):
         super(eeprom, self).__init__()
-        self.data = 256*[0]
+        self.data = range(256)
+        assert len(self.data)==256
+
+    def columnCount(self, parent):
+        return 1
+
+    def rowCount(self, parent):
+        return len(self.data)
+        
+    def flags(self, idx):
+        return QtCore.Qt.ItemIsEditable|super(eeprom, self).flags(idx)
+
+    def headerData(self, i, ori, role):
+        if ori==QtCore.Qt.Horizontal and i==0 and role==QtCore.Qt.DisplayRole:
+            return "Value"
+        elif ori==QtCore.Qt.Vertical and role==QtCore.Qt.DisplayRole:
+            return '0x%02x'%i
+
+    def data(self, idx, role):
+        if role==QtCore.Qt.DisplayRole:
+            return self.data[idx.row()]
+
+    def setData(self, idx, value, role):
+        print 'setData',idx,value,role
+        if role!=QtCore.Qt.EditRole:
+            return False
+        i = idx.row()
+        V, ok = value.toInt()
+        if not ok or V<0 or V>255:
+            return False
+        self.data[i] = V
+        self.dataChanged.emit(idx, idx)
+        return True
 
 class RadMon(QtGui.QMainWindow):
     def __init__(self, *args):
@@ -47,6 +79,12 @@ class RadMon(QtGui.QMainWindow):
         self.alarmbucketoflow = False # int. dose bucket overflow
 
         self.EE = eeprom()
+        self.ui.eeprom.setModel(self.EE)
+        self.updateLevels()
+
+        self.ui.vlevel1.editingFinished.connect(self.updateLevels)
+        self.ui.vlevel2.editingFinished.connect(self.updateLevels)
+        self.ui.vlevel3.editingFinished.connect(self.updateLevels)
 
         self.servSock.listen(QtNetwork.QHostAddress.LocalHost, 4001)
         self.sendT.start(1000)
@@ -74,6 +112,18 @@ class RadMon(QtGui.QMainWindow):
         for S in self.socks:
             if S.sock.isOpen():
                 S.sock.write(bytes)
+
+    def updateLevels(self):
+        for addr, w in [(7, self.ui.vlevel1),
+                        (10, self.ui.vlevel2),
+                        (13, self.ui.vlevel3)]:
+            val = int(w.value()*100)
+            idx = self.EE.index(addr, 0, QtCore.QModelIndex())
+            self.EE.setData(idx, QtCore.QVariant((val>>16)&0xff), QtCore.Qt.EditRole)
+            idx = self.EE.index(addr+1, 0, QtCore.QModelIndex())
+            self.EE.setData(idx, QtCore.QVariant((val>>8)&0xff), QtCore.Qt.EditRole)
+            idx = self.EE.index(addr+2, 0, QtCore.QModelIndex())
+            self.EE.setData(idx, QtCore.QVariant((val>>0)&0xff), QtCore.Qt.EditRole)
 
     def tick(self):
         # update device simulation

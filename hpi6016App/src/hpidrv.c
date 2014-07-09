@@ -35,6 +35,7 @@
 #include <longinRecord.h>
 #include <waveformRecord.h>
 #include <biRecord.h>
+#include <mbbiRecord.h>
 #include <mbbiDirectRecord.h>
 
 /* Console printing verbosity
@@ -347,11 +348,11 @@ void ARMDoRead(struct bufferevent *bev, void *raw)
                 scratch = dev->eeprom[11];
                 scratch <<= 8;
                 scratch |= dev->eeprom[12];
-                dev->lvl[0] = scratch;
+                dev->lvl[1] = scratch;
                 scratch = dev->eeprom[14];
                 scratch <<= 8;
                 scratch |= dev->eeprom[15];
-                dev->lvl[0] = scratch;
+                dev->lvl[2] = scratch;
             }
 
             dev->datavalid = 1;
@@ -854,6 +855,7 @@ initInRec(ai, 0)
 initInRec(longin, 0)
 initInRec(waveform, 0)
 initInRec(bi, 0)
+initInRec(mbbi, 0)
 initInRec(mbbiDirect, 0)
 
 #define readInParam(type, fld, RET) static long ARMReadParam_ ## type (type ## Record *prec) { prec->fld = ARMReadParam((dbCommon*)prec); return (RET); }
@@ -861,6 +863,7 @@ initInRec(mbbiDirect, 0)
 readInParam(ai, rval, 0)
 readInParam(longin, val, 0)
 readInParam(bi, rval, 0)
+readInParam(mbbi, rval, 0)
 readInParam(mbbiDirect, rval, 0)
 
 typedef struct {
@@ -876,6 +879,7 @@ typedef struct {
 dsetInParam(ai)
 dsetInParam(longin)
 dsetInParam(bi)
+dsetInParam(mbbi)
 dsetInParam(mbbiDirect)
 
 static dset6 devARMLastMsgwaveform = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_waveform, (DEVSUPFUN)ARMIoIntr}, (DEVSUPFUN)ARMLastMsg};
@@ -893,18 +897,29 @@ long ARMReport(int lvl)
         ELLNODE *node;
         for(node=ellFirst(&allARMs); node; node=ellNext(node)) {
             ARM *dev = CONTAINER(node, ARM, node);
+            epicsUInt8 ee[EEPROM_SIZE];
+            unsigned int i;
             errlogPrintf("ARM %s - %s:%u\n", dev->name, dev->host, dev->port);
             errlogPrintf(" connected: %s, data valid: %s\n",
                          dev->connected?"YES":"NO", dev->datavalid?"YES":"NO");
-            if(lvl<2)
+            if(lvl<1)
                 continue;
             epicsMutexMustLock(dev->lock);
             for(pmap=parammap; pmap->name; pmap++) {
                 epicsUInt32 val = ARMGetParam(dev, pmap->id, 0);
                 errlogPrintf(" %s = %u\n", pmap->name, (unsigned int)val);
             }
+            if(lvl>=2)
+                memcpy(ee, dev->eeprom, EEPROM_SIZE);
             epicsMutexUnlock(dev->lock);
 
+            for(i=0; i<EEPROM_SIZE; i++) {
+                if(i%16==0)
+                    errlogPrintf("%02x: ", i);
+                errlogPrintf("%02x", ee[i]);
+                if(i%16==15)
+                    errlogPrintf("\n");
+            }
         }
     }
     errlogFlush();
