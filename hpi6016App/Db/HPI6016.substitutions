@@ -13,8 +13,8 @@ file "eeprom.db"
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Delay:3-I",  ADDR="6", DESC="3 Delay"},
 
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Hi-I",   ADDR="7",  LEN="3", DESC="Hi Level"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Lo-I",   ADDR="10", LEN="3", DESC="Hi Level"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:3-I",    ADDR="13", LEN="3", DESC="Hi Level"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Lo-I",   ADDR="10", LEN="3", DESC="Lo Level"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:3-I",    ADDR="13", LEN="3", DESC="3 Level"},
 
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:SO-I",   ADDR="16", DESC="Sign-on time"},
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:Fail-I", ADDR="17", DESC="Fail time"},

@@ -47,8 +47,7 @@ class eeprom(QtCore.QAbstractTableModel):
             return self.data[idx.row()]
 
     def setData(self, idx, value, role):
-        print 'setData',idx,value,role
-        if role!=QtCore.Qt.EditRole:
+        if not idx.isValid() or role!=QtCore.Qt.EditRole:
             return False
         i = idx.row()
         V, ok = value.toInt()
@@ -173,7 +172,11 @@ class RadMon(QtGui.QMainWindow):
         return ''.join([chr(random.randint(0,255)) for n in range(N)])
 
     def mangleByte(self, msg):
-        return msg
+        "replace one random byte with a random charactor"
+        N = random.randint(0,len(msg)-1)
+        msg = bytearray(msg) # make mutable
+        msg[N] = random.randint(0,255)
+        return str(msg)
 
     def sendFW1(self):
         rate = int(self.ui.vrate.value()*100)

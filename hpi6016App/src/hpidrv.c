@@ -379,7 +379,7 @@ void ARMDoRead(struct bufferevent *bev, void *raw)
         }
         free(line);
 
-        if(lastver!=dev->version) {
+        if(lastver!=dev->version && lastver && dev->version) {
             ARMPrintf(1, dev, "FW Version change from %d to %d", lastver, dev->version);
         }
 
@@ -927,25 +927,27 @@ long ARMReport(int lvl)
             errlogPrintf("ARM %s - %s:%u\n", dev->name, dev->host, dev->port);
             errlogPrintf(" connected: %s, data valid: %s\n",
                          dev->connected?"YES":"NO", dev->datavalid?"YES":"NO");
-            if(lvl<1)
+            if(lvl<2)
                 continue;
             epicsMutexMustLock(dev->lock);
             for(pmap=parammap; pmap->name; pmap++) {
                 epicsUInt32 val = ARMGetParam(dev, pmap->id);
                 errlogPrintf(" %s = %u\n", pmap->name, (unsigned int)val);
             }
-            if(lvl>=2)
+            if(lvl>=3)
                 memcpy(ee, dev->eeprom, EEPROM_SIZE);
             epicsMutexUnlock(dev->lock);
 
-            for(i=0; i<EEPROM_SIZE; i++) {
-                if(i%16==0)
-                    errlogPrintf("%02x: ", i);
-                errlogPrintf("%02x", ee[i]);
-                if(i%4==3)
-                    errlogPrintf(" ");
-                if(i%16==15)
-                    errlogPrintf("\n");
+            if(lvl>=3) {
+                for(i=0; i<EEPROM_SIZE; i++) {
+                    if(i%16==0)
+                        errlogPrintf("%02x: ", i);
+                    errlogPrintf("%02x", ee[i]);
+                    if(i%4==3)
+                        errlogPrintf(" ");
+                    if(i%16==15)
+                        errlogPrintf("\n");
+                }
             }
         }
     }
