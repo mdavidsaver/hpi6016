@@ -631,7 +631,6 @@ typedef enum {
     ARMParamAlrmOFlowRate,
     ARMParamAlrmOFlowDose,
     ARMParamAlrmOFlowBuck,
-    ARMDataEEPROM,
     /* driver internals */
     ARMConnected,
     ARMValid,
@@ -666,7 +665,6 @@ static const ARMParam parammap[] = {
     {"AlrmOFlowRate", ARMParamAlrmOFlowRate, 1},
     {"AlrmOFlowDose", ARMParamAlrmOFlowDose, 1, 1},
     {"AlrmOFlowBuck", ARMParamAlrmOFlowBuck, 1, 1},
-    {"EEPROM",     ARMDataEEPROM, 1, 1},
     /* driver internals */
     {"Connected",  ARMConnected, 0},
     {"Valid",      ARMValid, 0},
@@ -674,6 +672,8 @@ static const ARMParam parammap[] = {
     {"NumEEBytes", ARMNumEEPROM, 0},
     {"CntConn",    ARMCntConn, 0},
     {"CntUpdate",  ARMCntUpdate, 0},
+    /* dummy */
+    {"EEPROM", ARMParamUnknown, 1, 1},
     {NULL}
 };
 
@@ -681,6 +681,7 @@ typedef struct {
     const ARM *dev;
     const ARMParam *param;
     int extra;
+    int extralen;
 } ARMRec;
 
 static
@@ -703,6 +704,11 @@ void ARMInitCommon(dbCommon *prec, DBLINK *link)
     priv->dev = findARM(str);
     param = strtok(NULL, " ");
     extra = strtok(NULL, " ");
+    if(extra)
+        priv->extra = atoi(extra);
+    extra = strtok(NULL, " ");
+    if(extra)
+        priv->extralen = atoi(extra);
 
     if(!priv->dev) {
         errlogPrintf("%s: device %s not found\n", prec->name, str);
@@ -723,9 +729,6 @@ void ARMInitCommon(dbCommon *prec, DBLINK *link)
             goto fail;
         }
     }
-
-    if(extra)
-        priv->extra = atoi(extra);
 
     prec->dpvt = priv;
 
@@ -758,7 +761,7 @@ const ARMRec *ARMDSetup(dbCommon *prec)
 }
 
 static
-epicsUInt32 ARMGetParam(const ARM *dev, int id, unsigned int extra)
+epicsUInt32 ARMGetParam(const ARM *dev, int id)
 {
     epicsUInt32 ret;
 
@@ -788,10 +791,6 @@ epicsUInt32 ARMGetParam(const ARM *dev, int id, unsigned int extra)
     case ARMCntConn:   ret = dev->cntConn; break;
     case ARMCntUpdate: ret = dev->cntUpdate; break;
 
-    case ARMDataEEPROM:
-        ret = dev->eeprom[extra&0xff];
-        break;
-
     default:
         ret = (epicsUInt32)-1;
     }
@@ -809,19 +808,42 @@ epicsUInt32 ARMReadParam(dbCommon *prec)
     /* for device data, alarm if not connected */
     if(priv->param->devdata && (!priv->dev->connected || !priv->dev->datavalid))
         (void)recGblSetSevr(prec, COMM_ALARM, INVALID_ALARM);
-    /* additional check for eeprom data validity */
-    if(priv->param->id==ARMDataEEPROM && priv->dev->nBytes!=0xff)
-        (void)recGblSetSevr(prec, COMM_ALARM, INVALID_ALARM);
 
     epicsMutexMustLock(priv->dev->lock);
     if(priv->dev->version!=hpicomm2 && priv->param->ver2only) {
         ret = 0;
         (void)recGblSetSevr(prec, READ_ALARM, INVALID_ALARM);
     } else {
-        ret = ARMGetParam(priv->dev, priv->param->id, priv->extra);
+        ret = ARMGetParam(priv->dev, priv->param->id);
     }
     epicsMutexUnlock(priv->dev->lock);
     return ret;
+}
+
+static epicsUInt32 ARMReadEEPROM(longinRecord *prec)
+{
+    epicsUInt32 ret = 0;
+    const ARMRec *priv = ARMDSetup((dbCommon*)prec);
+    if(!priv)
+        return 0;
+
+    epicsMutexMustLock(priv->dev->lock);
+    if(!priv->dev->connected || !priv->dev->datavalid || priv->dev->nBytes!=0xff) {
+        (void)recGblSetSevr(prec, COMM_ALARM, INVALID_ALARM);
+
+    } else {
+        int N = priv->extralen;
+        int addr = priv->extra&0xff;
+        if(addr+N>0)
+
+        while(N--) {
+            ret <<= 8;
+            ret |= priv->dev->eeprom[addr++];
+        }
+    }
+    epicsMutexUnlock(priv->dev->lock);
+    prec->val = ret;
+    return 0;
 }
 
 static
@@ -882,6 +904,9 @@ dsetInParam(bi)
 dsetInParam(mbbi)
 dsetInParam(mbbiDirect)
 
+static dset6 devARMEEPROMlongin = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_longin, (DEVSUPFUN)ARMIoIntr}, (DEVSUPFUN)ARMReadEEPROM};
+epicsExportAddress(dset, devARMEEPROMlongin);
+
 static dset6 devARMLastMsgwaveform = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_waveform, (DEVSUPFUN)ARMIoIntr}, (DEVSUPFUN)ARMLastMsg};
 epicsExportAddress(dset, devARMLastMsgwaveform);
 
@@ -906,7 +931,7 @@ long ARMReport(int lvl)
                 continue;
             epicsMutexMustLock(dev->lock);
             for(pmap=parammap; pmap->name; pmap++) {
-                epicsUInt32 val = ARMGetParam(dev, pmap->id, 0);
+                epicsUInt32 val = ARMGetParam(dev, pmap->id);
                 errlogPrintf(" %s = %u\n", pmap->name, (unsigned int)val);
             }
             if(lvl>=2)
@@ -917,6 +942,8 @@ long ARMReport(int lvl)
                 if(i%16==0)
                     errlogPrintf("%02x: ", i);
                 errlogPrintf("%02x", ee[i]);
+                if(i%4==3)
+                    errlogPrintf(" ");
                 if(i%16==15)
                     errlogPrintf("\n");
             }

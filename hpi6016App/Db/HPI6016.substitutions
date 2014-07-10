@@ -1,0 +1,55 @@
+
+file "HPI6016dev.db"
+{{P="\$(SYS){\$(DEV)}", PORT="\$(PORT)"}}
+
+file "eeprom.db"
+{
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Pause:Hi-I", ADDR="1", DESC="Hi Pause"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Pause:Lo-I", ADDR="2", DESC="Lo Pause"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Pause:3-I",  ADDR="3", DESC="3 Pause"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Delay:Hi-I", ADDR="4", DESC="Hi Delay"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Delay:Lo-I", ADDR="5", DESC="Lo Delay"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Delay:3-I",  ADDR="6", DESC="3 Delay"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Hi-I",   ADDR="7",  LEN="3", DESC="Hi Level"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Lo-I",   ADDR="10", LEN="3", DESC="Hi Level"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:3-I",    ADDR="13", LEN="3", DESC="Hi Level"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:SO-I",   ADDR="16", DESC="Sign-on time"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:Fail-I", ADDR="17", DESC="Fail time"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Offset-I",    ADDR="18", DESC="Zero offset"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Check:EE-I",  ADDR="19", DESC="EEPROM Check"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Fail-I",  ADDR="20", DESC="Fail level"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Width:HV-I",  ADDR="21", DESC="HVP Width"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:HV-I",   ADDR="22", LEN="2", DESC="HVP Time"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:HVmin-I", ADDR="24", LEN="2", DESC="HVP Level"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Quality-I",   ADDR="26", LEN="2", DESC="Quality Factor"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:Integ-I", ADDR="27", DESC="Integ. time"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Alrm:Integ-I", ADDR="28", LEN="3", DESC="Integ. alarm"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:00-I", ADDR="31", DESC="Alarm table 0"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:01-I", ADDR="32", DESC="Alarm table 1"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:02-I", ADDR="33", DESC="Alarm table 2"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:03-I", ADDR="34", DESC="Alarm table 3"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:04-I", ADDR="35", DESC="Alarm table 4"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:05-I", ADDR="36", DESC="Alarm table 5"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:06-I", ADDR="37", DESC="Alarm table 6"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:07-I", ADDR="38", DESC="Alarm table 7"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:08-I", ADDR="39", DESC="Alarm table 8"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:09-I", ADDR="40", DESC="Alarm table 9"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:10-I", ADDR="41", DESC="Alarm table 10"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:11-I", ADDR="42", DESC="Alarm table 11"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:12-I", ADDR="43", DESC="Alarm table 12"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:13-I", ADDR="44", DESC="Alarm table 13"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:14-I", ADDR="45", DESC="Alarm table 14"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:15-I", ADDR="46", DESC="Alarm table 15"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:16-I", ADDR="47", DESC="Alarm table 16"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Ser:User-I", ADDR="48", LEN="2", DESC="User S/N"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Ser:1-I", ADDR="50", LEN="3", DESC="Serial #"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Ser:2-I", ADDR="53", LEN="3", DESC="Serial #2"},
+}

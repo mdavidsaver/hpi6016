@@ -30,7 +30,11 @@ class eeprom(QtCore.QAbstractTableModel):
         return len(self.data)
         
     def flags(self, idx):
-        return QtCore.Qt.ItemIsEditable|super(eeprom, self).flags(idx)
+        ret = super(eeprom, self).flags(idx)
+        if idx.row()<7 or idx.row()>15:
+            # don't allow level fields to be edited via the table
+            ret |= QtCore.Qt.ItemIsEditable
+        return ret
 
     def headerData(self, i, ori, role):
         if ori==QtCore.Qt.Horizontal and i==0 and role==QtCore.Qt.DisplayRole:

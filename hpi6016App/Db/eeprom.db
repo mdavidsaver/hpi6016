@@ -1,0 +1,7 @@
+
+record(longin, "$(P)$(SIG)") {
+    field(DESC, "$(DESC=Address $(ADDR))")
+    field(DTYP, "ARM EEPROM")
+    field(INP , "@$(PORT) EEPROM $(ADDR) $(LEN=1)")
+    field(SCAN, "I/O Intr")
+}

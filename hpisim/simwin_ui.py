@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'simwin.ui'
 #
-# Created: Wed Jul  9 11:19:46 2014
+# Created: Thu Jul 10 11:38:00 2014
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,6 +45,7 @@ class Ui_simwin(object):
         self.vdose.setAlignment(QtCore.Qt.AlignRight|QtCore.Qt.AlignTrailing|QtCore.Qt.AlignVCenter)
         self.vdose.setMinimum(0.0)
         self.vdose.setMaximum(1000000.0)
+        self.vdose.setSingleStep(0.1)
         self.vdose.setObjectName(_fromUtf8("vdose"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.FieldRole, self.vdose)
         self.label_3 = QtGui.QLabel(self.centralwidget)
