@@ -320,17 +320,18 @@ void ARMDoRead(struct bufferevent *bev, void *raw)
             dev->integrated = parts[1];
             dev->failcnt = parts[2];
 
-            dev->alrm_low        = !!(parts[3]&(1<<0));
-            dev->alrm_high       = !!(parts[3]&(1<<1));
-            dev->alrm_dose       = !!(parts[3]&(1<<2));
-            dev->alrm_3          = !!(parts[3]&(1<<3));
-            dev->alrm_fail       = !!(parts[3]&(1<<4));
-            dev->alrm_oflow_rate = !!(parts[3]&(1<<5));
-            /* pos/neg number 1<<6 */
-            dev->alrm_hvp_fail   = !!(parts[3]&(1<<7));
-            dev->alrm_hvp_run    = !!(parts[3]&(1<<10));
-            dev->alrm_oflow_dose = !!(parts[3]&(1<<8));
-            dev->alrm_oflow_buck = !!(parts[3]&(1<<9));
+            dev->alrm_low        = !!(parts[3]&0x0100);
+            dev->alrm_high       = !!(parts[3]&0x0200);
+            dev->alrm_dose       = !!(parts[3]&0x0400);
+            dev->alrm_3          = !!(parts[3]&0x0800);
+            dev->alrm_fail       = !!(parts[3]&0x1000);
+            dev->alrm_oflow_rate = !!(parts[3]&0x2000);
+            /* pos/neg number 0x4000 */
+            dev->alrm_hvp_fail   = !!(parts[3]&0x8000);
+
+            dev->alrm_oflow_dose = !!(parts[3]&0x0001);
+            dev->alrm_oflow_buck = !!(parts[3]&0x0002);
+            dev->alrm_hvp_run    = !!(parts[3]&0x0004);
 
             dev->lastAddr = (parts[4]>>8)&0xff;
             dev->eeprom[dev->lastAddr] = parts[4]&0xff;
@@ -363,8 +364,8 @@ void ARMDoRead(struct bufferevent *bev, void *raw)
             update = 1;
 
 
-            ARMPrintf(3, dev, "Decoded: '%s'\n as %d %u %03u %03u %03u", line, dev->rate,
-                      dev->lvl[0], dev->lvl[1], dev->lvl[2], dev->failcnt);
+            ARMPrintf(3, dev, "Decoded: '%s'\n as %08x %08x %02x %04x %04x", line,
+                      parts[0], parts[1], parts[2], parts[3], parts[4]);
             kickdog = 1;
 
 
