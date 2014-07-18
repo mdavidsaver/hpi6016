@@ -54,6 +54,7 @@ record(fanout, "$(P)Update:3-FOut_") {
     field(LNK1, "$(P)Test:Pulse-Sts")
     field(LNK2, "$(P)Alrm:TotOflow-Sts")
     field(LNK3, "$(P)Alrm:BuckOflow-Sts")
+    field(LNK4, "$(P)Alrm:Dose-Sts")
     field(FLNK, "$(P)Update:4-FOut_")
     field(TSEL, "$(P)DoseRate-I.TIME")
 }
@@ -229,6 +230,15 @@ record(bi, "$(P)Alrm:2-Sts") {
 record(bi, "$(P)Alrm:3-Sts") {
   field(DTYP, "ARM Read Param")
   field(INP , "@$(PORT) Alrm3")
+  field(ZNAM, "Normal")
+  field(ONAM, "Trip")
+  field(OSV , "MAJOR")
+  field(TSEL, "$(P)DoseRate-I.TIME")
+}
+
+record(bi, "$(P)Alrm:Dose-Sts") {
+  field(DTYP, "ARM Read Param")
+  field(INP , "@$(PORT) AlrmDose")
   field(ZNAM, "Normal")
   field(ONAM, "Trip")
   field(OSV , "MAJOR")
