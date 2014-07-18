@@ -223,26 +223,26 @@ class RadMon(QtGui.QMainWindow):
 
         bits = 0
         if self.alrmlow:
-            bits |= 1<<0 # alarm Lo
+            bits |= 0x0100 # alarm Lo
         if self.alrmhigh:
-            bits |= 1<<1 # alarm Hi
-        if self.alrm3:
-            bits |= 1<<2 # alarm 3 (unused)
+            bits |= 0x0200 # alarm Hi
         if self.alrmdose:
-            bits |= 1<<3 # alarm I1 (integrated dose)
+            bits |= 0x0400 # alarm I1 (integrated dose)
+        if self.alrm3:
+            bits |= 0x0800 # alarm 3 (unused)
         if self.failcnt==0:
-            bits |= 1<<4 # fail
+            bits |= 0x1000 # fail
         if self.alarmrateoflow:
-            bits |= 1<<5 # overflow (>100 mR/h)
+            bits |= 0x2000 # overflow (>100 mR/h)
         # 1<<6, negative number?
         if self.ui.btnFail.isChecked():
-            bits |= 1<<7 # HVP test fails
+            bits |= 0x8000 # HVP test fails
         if self.alarmdoseoflow:
-            bits |= 1<<8
+            bits |= 0x0001
         if self.alarmbucketoflow:
-            bits |= 1<<9
+            bits |= 0x0002
         if self.ui.btnTest.isChecked():
-            bits |= 1<<10 # HVP test runs
+            bits |= 0x0004 # HVP test runs
 
         data = {
             'dose':int(self.ui.vdose.value()*100),
