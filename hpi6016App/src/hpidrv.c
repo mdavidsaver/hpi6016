@@ -46,6 +46,7 @@
  */
 int ARMDebug = 1;
 int ARMTimeout = 10;
+int ARMHVPMask = 10;
 
 #define EEPROM_SIZE 256
 
@@ -70,7 +71,8 @@ typedef struct {
      * which must lock them for writing, but not reading.
      * Device support must lock for reading, but can't write
      */
-    epicsUInt32 rate, integrated;
+    epicsInt32 rate, rate_orig;
+    epicsUInt32 integrated;
     epicsUInt16 lvl[3], failcnt;
     unsigned int alrm_low:1;
     unsigned int alrm_high:1;
@@ -86,6 +88,8 @@ typedef struct {
 
     epicsUInt8 lastAddr; /* last address sent by 6016 */
     epicsUInt16 nBytes; /* # of eeprom bytes received */
+
+    epicsUInt8 hvp_mask_cnt;
 
     /* Internal status read by device support */
 
@@ -129,6 +133,7 @@ void clearData(ARM *dev)
 {
     dev->datavalid = 0;
     dev->nBytes = 0;
+    dev->hvp_mask_cnt = 0;
 }
 
 static
@@ -277,6 +282,7 @@ void ARMDoRead(struct bufferevent *bev, void *raw)
             dev->rate = parts[0]&0x7fffff;
             if(parts[0]&0x800000)
                 dev->rate *= -1;
+            dev->rate_orig = dev->rate;
 
             dev->lvl[0] = parts[1];
             dev->lvl[1] = parts[2];
@@ -311,11 +317,14 @@ void ARMDoRead(struct bufferevent *bev, void *raw)
 
         } else if(nparts==5) /* new format */
         {
+            int mask = ARMHVPMask;
+
             epicsMutexMustLock(dev->lock);
             /* rate is stored as 3 byte sign and magnatude */
             dev->rate = parts[0]&0x7fffff;
             if(parts[0]&0x800000)
                 dev->rate *= -1;
+            dev->rate_orig = dev->rate;
 
             dev->integrated = parts[1];
             dev->failcnt = parts[2];
@@ -332,6 +341,17 @@ void ARMDoRead(struct bufferevent *bev, void *raw)
             dev->alrm_oflow_dose = !!(parts[3]&0x0001);
             dev->alrm_oflow_buck = !!(parts[3]&0x0002);
             dev->alrm_hvp_run    = !!(parts[3]&0x0004);
+
+            if(dev->alrm_hvp_run && mask>0) {
+                /* HVP test ran this cycle.  Start mask countdown */
+                dev->hvp_mask_cnt = mask;
+            }
+            if(dev->hvp_mask_cnt) {
+               /* apply HVP masking. */
+               dev->hvp_mask_cnt--;
+               if(dev->rate>0)
+                   dev->rate /= -10;
+            }
 
             dev->lastAddr = (parts[4]>>8)&0xff;
             dev->eeprom[dev->lastAddr] = parts[4]&0xff;
@@ -617,6 +637,7 @@ typedef enum {
     ARMParamUnknown = 0,
     /* device data */
     ARMParamRate,
+    ARMParamRateOrig,
     ARMParamIntegrated,
     ARMParamLvl1,
     ARMParamLvl2,
@@ -651,6 +672,7 @@ typedef struct {
 static const ARMParam parammap[] = {
     /* device data */
     {"DoseRate", ARMParamRate, 1},
+    {"DoseRateOrig", ARMParamRateOrig, 1},
     {"Dose", ARMParamIntegrated, 1, 1},
     {"Lvl1", ARMParamLvl1, 1},
     {"Lvl2", ARMParamLvl2, 1},
@@ -768,6 +790,7 @@ epicsUInt32 ARMGetParam(const ARM *dev, int id)
 
     switch(id) {
     case ARMParamRate:    ret = dev->rate; break;
+    case ARMParamRateOrig:    ret = dev->rate_orig; break;
     case ARMParamIntegrated: ret = dev->integrated; break;
     case ARMParamLvl1:    ret = dev->lvl[0]; break;
     case ARMParamLvl2:    ret = dev->lvl[1]; break;
@@ -821,10 +844,10 @@ epicsUInt32 ARMReadParam(dbCommon *prec)
     return ret;
 }
 
-static epicsUInt32 ARMReadEEPROM(longinRecord *prec)
+static epicsUInt32 ARMReadEEPROM(dbCommon *prec)
 {
     epicsUInt32 ret = 0;
-    const ARMRec *priv = ARMDSetup((dbCommon*)prec);
+    const ARMRec *priv = ARMDSetup(prec);
     if(!priv)
         return 0;
 
@@ -843,7 +866,18 @@ static epicsUInt32 ARMReadEEPROM(longinRecord *prec)
         }
     }
     epicsMutexUnlock(priv->dev->lock);
-    prec->val = ret;
+    return ret;
+}
+
+static epicsUInt32 ARMReadEEPROMlongin(longinRecord *prec)
+{
+    prec->val = ARMReadEEPROM((dbCommon*)prec);
+    return 0;
+}
+
+static epicsUInt32 ARMReadEEPROMai(aiRecord *prec)
+{
+    prec->rval = ARMReadEEPROM((dbCommon*)prec);
     return 0;
 }
 
@@ -905,8 +939,11 @@ dsetInParam(bi)
 dsetInParam(mbbi)
 dsetInParam(mbbiDirect)
 
-static dset6 devARMEEPROMlongin = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_longin, (DEVSUPFUN)ARMIoIntr}, (DEVSUPFUN)ARMReadEEPROM};
+static dset6 devARMEEPROMlongin = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_longin, (DEVSUPFUN)ARMIoIntr}, (DEVSUPFUN)ARMReadEEPROMlongin};
 epicsExportAddress(dset, devARMEEPROMlongin);
+
+static dset6 devARMEEPROMai = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_ai, (DEVSUPFUN)ARMIoIntr}, (DEVSUPFUN)ARMReadEEPROMai};
+epicsExportAddress(dset, devARMEEPROMai);
 
 static dset6 devARMLastMsgwaveform = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_waveform, (DEVSUPFUN)ARMIoIntr}, (DEVSUPFUN)ARMLastMsg};
 epicsExportAddress(dset, devARMLastMsgwaveform);
@@ -977,3 +1014,4 @@ static void ARMRegistrar(void)
 epicsExportRegistrar(ARMRegistrar);
 epicsExportAddress(int, ARMDebug);
 epicsExportAddress(int, ARMTimeout);
+epicsExportAddress(int, ARMHVPMask);

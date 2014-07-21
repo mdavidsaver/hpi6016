@@ -2,25 +2,19 @@
 file "HPI6016dev.db"
 {{P="\$(SYS){\$(DEV)}", PORT="\$(PORT)"}}
 
-file "eeprom.db"
+file "eepromlongin.db"
 {
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Pause:Hi-I", ADDR="1", DESC="Hi Pause"},
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Pause:Lo-I", ADDR="2", DESC="Lo Pause"},
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Pause:3-I",  ADDR="3", DESC="3 Pause"},
 
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Delay:Hi-I", ADDR="4", DESC="Hi Delay"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Delay:Lo-I", ADDR="5", DESC="Lo Delay"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Delay:3-I",  ADDR="6", DESC="3 Delay"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Delay:Hi-I", ADDR="4", EGU="s", DESC="Hi Delay"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Delay:Lo-I", ADDR="5", EGU="s", DESC="Lo Delay"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Delay:3-I",  ADDR="6", EGU="s", DESC="3 Delay"},
 
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Hi-I",   ADDR="7",  LEN="3", DESC="Hi Level"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Lo-I",   ADDR="10", LEN="3", DESC="Lo Level"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:3-I",    ADDR="13", LEN="3", DESC="3 Level"},
-
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:SO-I",   ADDR="16", DESC="Sign-on time"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:Fail-I", ADDR="17", DESC="Fail time"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Offset-I",    ADDR="18", DESC="Zero offset"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:SO-I",   ADDR="16", EGU="s", DESC="Sign-on time"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:Fail-I", ADDR="17", EGU="s", DESC="Fail time"},
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Check:EE-I",  ADDR="19", DESC="EEPROM Check"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Fail-I",  ADDR="20", DESC="Fail level"},
 
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Width:HV-I",  ADDR="21", DESC="HVP Width"},
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:HV-I",   ADDR="22", LEN="2", DESC="HVP Time"},
@@ -28,8 +22,7 @@ file "eeprom.db"
 
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Quality-I",   ADDR="26", LEN="2", DESC="Quality Factor"},
 
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:Integ-I", ADDR="27", DESC="Integ. time"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Alrm:Integ-I", ADDR="28", LEN="3", DESC="Integ. alarm"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:Integ-I", ADDR="27", EGU="m", DESC="Integ. time"},
 
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:00-I", ADDR="31", DESC="Alarm table 0"},
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:01-I", ADDR="32", DESC="Alarm table 1"},
@@ -52,4 +45,19 @@ file "eeprom.db"
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Ser:User-I", ADDR="48", LEN="2", DESC="User S/N"},
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Ser:1-I", ADDR="50", LEN="3", DESC="Serial #"},
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Ser:2-I", ADDR="53", LEN="3", DESC="Serial #2"},
+}
+
+
+file "eepromai.db"
+{
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Hi-I",   ADDR="7",  LEN="3", ASLO="1e-2", PREC="2", EGU="mR/h", DESC="Hi Level"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Lo-I",   ADDR="10", LEN="3", ASLO="1e-2", PREC="2", EGU="mR/h", DESC="Lo Level"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:3-I",    ADDR="13", LEN="3", ASLO="1e-2", PREC="2", EGU="mR/h", DESC="3 Level"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Zero-I", ADDR="18", ASLO="1e-2", PREC="2", EGU="mR/h", DESC="Zero offset"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Fail-I", ADDR="20", ASLO="-1e-2", PREC="2", EGU="mR/h", DESC="Fail level"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Integ-I",ADDR="28", LEN="3", ASLO="1e-2", PREC="2", EGU="mR", DESC="Integ. level"},
 }

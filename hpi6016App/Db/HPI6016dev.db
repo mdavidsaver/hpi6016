@@ -10,6 +10,19 @@ record(ai, "$(P)DoseRate-I") {
     field(HOPR, "500")
     field(LOPR, "-0.5")
     field(EGU , "mR/h")
+    field(FLNK, "$(P)DoseRate:O-I")
+}
+
+record(ai, "$(P)DoseRate:O-I") {
+    field(DTYP, "ARM Read Param")
+    field(INP , "@$(PORT) DoseRateOrig")
+    field(LINR, "LINEAR")
+    field(ESLO, "1e-2")
+    field(PREC, "2")
+    field(ADEL, "0.02")
+    field(HOPR, "500")
+    field(LOPR, "-0.5")
+    field(EGU , "mR/h")
     field(FLNK, "$(P)Dose-I")
 }
 

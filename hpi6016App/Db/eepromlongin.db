@@ -4,4 +4,7 @@ record(longin, "$(P)$(SIG)") {
     field(DTYP, "ARM EEPROM")
     field(INP , "@$(PORT) EEPROM $(ADDR) $(LEN=1)")
     field(SCAN, "I/O Intr")
+    field(HOPR, "$(HOPR=)")
+    field(LOPR, "$(LOPR=)")
+    field(EGU , "$(EGU=)")
 }
