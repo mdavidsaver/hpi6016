@@ -45,8 +45,10 @@
  * 3 - Debugging
  */
 int ARMDebug = 1;
+/* Communication timeout (no data in # seconds) */
 int ARMTimeout = 10;
-int ARMHVPMask = 10;
+/* HVP test mask time (sec) */
+int ARMHVPMask = 4;
 
 #define EEPROM_SIZE 256
 
