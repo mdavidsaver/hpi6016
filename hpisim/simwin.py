@@ -17,13 +17,16 @@ class SockHandler(QtCore.QObject):
         P.socks.remove(self)
         P.updateNConn()
 
-# EEPROM data circa July 2014
+# EEPROM data circa July 2014 (HVP disabled)
 _eedata = [
     0xff, 0x0a, 0x0a, 0x0a, 0x03, 0x03, 0x00, 0x00, 0x01, 0xf4, 0x00, 0x00, 0x64, 0x00, 0x00, 0x00,
     0x64, 0x3c, 0x32, 0xa5, 0x14, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x05, 0x00, 0x01, 0xf4, 0x78,
     0x74, 0x73, 0x73, 0x38, 0x34, 0x33, 0x33, 0x78, 0x74, 0x73, 0x73, 0x38, 0x34, 0x33, 0x33, 0x6e,
     0x15, 0x9f, 0x32, 0x2e, 0x30, 0x31, 0x42, 0x31, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
 ]
+
+# dose rate data for an HVP test
+_hvp_data = [0.0, 2.3, 0.45, -0.18, -0.36, -0.36, -0.36, -0.29, -0.2, -0.13, -0.07, -0.07]
 
 class eeprom(QtCore.QAbstractTableModel):
     def __init__(self):
@@ -81,6 +84,8 @@ class RadMon(QtGui.QMainWindow):
         
         self.failcnt = 60
         self.nextaddr = 0
+        self.hvpdata = -1
+        self.rate = 0
         self.alrmlow = False
         self.alrmhigh = False
         self.alrmdose = False
@@ -144,10 +149,25 @@ class RadMon(QtGui.QMainWindow):
         else:
             self.failcnt = 60
 
+        # simulate HVP test pattern
+        if self.ui.btnTest.isChecked():
+            self.hvpdata = 0
+        if self.hvpdata>=0 and self.hvpdata<len(_hvp_data):
+            rate += _hvp_data[self.hvpdata]
+            self.hvpdata += 1
+        else:
+            self.hvpdata = -1
+
+        self.rate = int(rate*100)
+
         self.alrmlow = rate>self.ui.vlevel2.value()
         self.alrmhigh = rate>self.ui.vlevel1.value()
         self.alrm3 = rate>self.ui.vlevel3.value()
         self.alarmrateoflow = rate>100.0
+
+        dose = self.ui.vdose.value()
+        self.alrmdose = dose>5
+        self.alarmbucketoflow = dose>45
 
         self.sendData()
 
@@ -187,7 +207,7 @@ class RadMon(QtGui.QMainWindow):
         return str(msg)
 
     def sendFW1(self):
-        rate = int(self.ui.vrate.value()*100)
+        rate = self.rate
         if rate<0:
             rate = -rate | 0x800000
 
@@ -217,7 +237,7 @@ class RadMon(QtGui.QMainWindow):
         return '%(rate)06x %(alarm1)04x %(alarm2)04x %(alarm3)04x %(failCnt)02x %(bits)02x\r\n'%data
 
     def sendFW2(self):
-        rate = int(self.ui.vrate.value()*100)
+        rate = self.rate
         if rate<0:
             rate = -rate | 0x800000
 
