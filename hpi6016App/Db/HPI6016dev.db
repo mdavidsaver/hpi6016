@@ -346,6 +346,39 @@ record(calcout, "$(P)Alrm:Sum-Sts_") {
   field(IVOA, "Set output to IVOV")
   field(IVOV, "3")
   field(TSEL, "$(P)DoseRate-I.TIME")
+
+  field(FLNK, "$(P)Alrm:Num-Calc_")
+}
+
+# Calculate the alarm table number
+record(calcout, "$(P)Alrm:Num-Calc_") {
+  field(CALC, "(E||F||G||H)?16:(A|B<<1|C<<2|D<<3)")
+  field(INPA, "$(P)Alrm:Low-Sts NPP")
+  field(INPB, "$(P)Alrm:High-Sts NPP")
+  field(INPC, "$(P)Alrm:Dose-Sts NPP")
+  field(INPD, "$(P)Alrm:3-Sts NPP")
+
+  field(INPE, "$(P)Alrm:Pulse-Sts NPP")
+  field(INPF, "$(P)Alrm:Fail-Sts NPP")
+  field(INPG, "$(P)Alrm:Oflow-Sts")
+  field(INPH, "$(P)Alrm:BuckOflow-Sts")
+
+  field(OUT , "$(P)Alrm:Num-I PP")
+}
+
+record(longin, "$(P)Alrm:Num-I") {
+  field(DESC, "Active Alarm table code")
+  field(FLNK, "$(P)Alrm:Bit-Calc_")
+}
+
+record(calcout, "$(P)Alrm:Bit-Calc_") {
+  field(CALC, "1<<A")
+  field(INPA, "$(P)Alrm:Num-I NPP")
+  field(OUT , "$(P)Alrm:Bit-I PP")
+}
+
+record(longin, "$(P)Alrm:Bit-I") {
+  field(DESC, "Active Alarm table bit")
 }
 
 record(mbbi, "$(P)Alrm:Sum-Sts") {

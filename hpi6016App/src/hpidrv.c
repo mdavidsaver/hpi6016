@@ -76,13 +76,16 @@ typedef struct {
     epicsInt32 rate, rate_orig;
     epicsUInt32 integrated;
     epicsUInt16 lvl[3], failcnt;
+    /* Alarms based on correct measurements */
     unsigned int alrm_low:1;
     unsigned int alrm_high:1;
     unsigned int alrm_dose:1;
     unsigned int alrm_3:1;
+    /* "alarm" when HVP test runs */
+    unsigned int alrm_hvp_run:1;
+    /* Alarms indicating abnormal conditions or equipment failure */
     unsigned int alrm_fail:1;
     unsigned int alrm_hvp_fail:1;
-    unsigned int alrm_hvp_run:1;
     unsigned int alrm_oflow_rate:1;
     unsigned int alrm_oflow_dose:1;
     unsigned int alrm_oflow_buck:1;
