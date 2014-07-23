@@ -102,6 +102,8 @@ class RadMon(QtGui.QMainWindow):
         self.ui.vlevel2.editingFinished.connect(self.updateLevels)
         self.ui.vlevel3.editingFinished.connect(self.updateLevels)
 
+        self.ui.btnInj.clicked.connect(self.sendByte)
+
         self.servSock.listen(QtNetwork.QHostAddress.LocalHost, 4001)
         self.sendT.start(1000)
 
@@ -198,6 +200,9 @@ class RadMon(QtGui.QMainWindow):
         "Return a random byte string of up to 40 charactors"
         N = random.randint(1,40)
         return ''.join([chr(random.randint(0,255)) for n in range(N)])
+
+    def sendByte(self):
+        self.write(chr(random.randint(0,255)))
 
     def mangleByte(self, msg):
         "replace one random byte with a random charactor"

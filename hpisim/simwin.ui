@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>339</width>
-    <height>340</height>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -153,6 +153,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="btnInj">
+            <property name="text">
+             <string>Inject byte</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QPushButton" name="btnFault">
             <property name="text">
              <string>Inject fault</string>
@@ -165,7 +172,7 @@
           <item>
            <widget class="QPushButton" name="btnByte">
             <property name="text">
-             <string>Inject byte</string>
+             <string>Corrupt byte</string>
             </property>
             <property name="checkable">
              <bool>true</bool>

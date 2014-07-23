@@ -2,7 +2,8 @@
 Testing process
 ===============
 
-Initial testing uses the hpisim2.py software device simulation.
+Initial testing uses the hpisim3.py software device simulation.
+Repeat for both Original FW and Integrated Dose modes
 
 # Start IOC after simulation is running.
 
@@ -31,11 +32,30 @@ Initial testing uses the hpisim2.py software device simulation.
 ## Verify that $(P)Alrm:Fail-Sts clears
 ## Verify that the fail holdoff counter returns to its initial value (eg. 60)
 
-# Uncheck HPV Test Pass
+# Step simulation dose rates from 0 through 0xffffff
+## When in Original FW mode this should have no effect
+## In Integrated Dose mode, verify that $(P)Dose-I gives a matching value
+
+# For both Dose and Dose Buck Oflow alarms, set simulated dose to level + 0.01 (5mR for Dose and 45mR for Buck Oflow)
+   When in Original FW mode this should have no effect
+## Verify that $(P)Alrm:Dose-Sts is active at 5.01
+## Verify that $(P)Alrm:Dose-Sts and $(P)Alrm:BuckOflow-Sts are active active at 45.01
+## Verify $(P)Alarm:Sum-Sts signals appropriate severity (MAJOR)
+## Return simulated dose to 0 and verify that alarms clear
+
+# Check HPV Test Fail
 ## Verify that $(P)Alrm:Pulse-Sts becomes active
 
-# Check HPV Test Pass
+# Uncheck HPV Test Fail
 ## Verify that $(P)Alrm:Pulse-Sts clears.
+
+# When in Original FW mode
+## Verify that $(P)Lvl:Low-I and $(P)Lvl:High-I immediately show the correct value on connection.
+
+# When in Integrated Dose mode
+## Wait for $(P)Num:EEBytes-I==255
+## Verify that $(P)Lvl:Low-I and $(P)Lvl:High-I show the correct values
+## Verify that all EEPROM values are displayed correctly.
 
 === Dose sum test ===
 
@@ -50,8 +70,6 @@ Initial testing uses the hpisim2.py software device simulation.
 
 # Stop simulation.
 ## Verify immediate disconnect and comm alarms when simulation stops.
-## Verify that all $(P)Cnt:*Bad-I increment by 1 immediately, and continue to count
-   once for each connection attempt (~5 seconds).
 ## Verify that data update counter stops incrementing
 ## Verify that the following PVs immediately show an INVALID alarm
   $(P)DoseRate-I
@@ -65,7 +83,7 @@ Initial testing uses the hpisim2.py software device simulation.
 ##After 60 seconds verify that $(P)Dose:1m-I shows an INVALID alarm
    and $(P)Cnt:1mTot-I == $(P)Cnt:1mBad-I
 
-# Re-start simulation
+# Re-start simulation (ensure correct FW mode is selected)10
 ## Verify reconnection.  Alarms should clear and data update counter should resume counting
 ## Repeat Value tests
 

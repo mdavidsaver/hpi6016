@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'simwin.ui'
 #
-# Created: Thu Jul 10 11:38:00 2014
+# Created: Wed Jul 23 14:16:08 2014
 #      by: PyQt4 UI code generator 4.9.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_simwin(object):
     def setupUi(self, simwin):
         simwin.setObjectName(_fromUtf8("simwin"))
-        simwin.resize(339, 340)
+        simwin.resize(339, 367)
         self.centralwidget = QtGui.QWidget(simwin)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.centralwidget)
@@ -87,6 +87,9 @@ class Ui_simwin(object):
         self.btnTest.setCheckable(True)
         self.btnTest.setObjectName(_fromUtf8("btnTest"))
         self.verticalLayout.addWidget(self.btnTest)
+        self.btnInj = QtGui.QPushButton(self.centralwidget)
+        self.btnInj.setObjectName(_fromUtf8("btnInj"))
+        self.verticalLayout.addWidget(self.btnInj)
         self.btnFault = QtGui.QPushButton(self.centralwidget)
         self.btnFault.setCheckable(True)
         self.btnFault.setObjectName(_fromUtf8("btnFault"))
@@ -158,8 +161,9 @@ class Ui_simwin(object):
         self.btnFail.setText(QtGui.QApplication.translate("simwin", "HVP Test Fail", None, QtGui.QApplication.UnicodeUTF8))
         self.btnPause.setText(QtGui.QApplication.translate("simwin", "Pause Tx", None, QtGui.QApplication.UnicodeUTF8))
         self.btnTest.setText(QtGui.QApplication.translate("simwin", "HVP Test", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnInj.setText(QtGui.QApplication.translate("simwin", "Inject byte", None, QtGui.QApplication.UnicodeUTF8))
         self.btnFault.setText(QtGui.QApplication.translate("simwin", "Inject fault", None, QtGui.QApplication.UnicodeUTF8))
-        self.btnByte.setText(QtGui.QApplication.translate("simwin", "Inject byte", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnByte.setText(QtGui.QApplication.translate("simwin", "Corrupt byte", None, QtGui.QApplication.UnicodeUTF8))
         self.fwmode.setItemText(0, QtGui.QApplication.translate("simwin", "Original FW", None, QtGui.QApplication.UnicodeUTF8))
         self.fwmode.setItemText(1, QtGui.QApplication.translate("simwin", "Integrate Dose", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("simwin", "EEPROM Contents", None, QtGui.QApplication.UnicodeUTF8))
