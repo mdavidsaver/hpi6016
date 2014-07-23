@@ -16,11 +16,10 @@ file "eepromlongin.db"
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:Fail-I", ADDR="17", EGU="s", DESC="Fail time"},
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Check:EE-I",  ADDR="19", DESC="EEPROM Check"},
 
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Width:HV-I",  ADDR="21", DESC="HVP Width"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:HV-I",   ADDR="22", LEN="2", DESC="HVP Time"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:HVmin-I", ADDR="24", LEN="2", DESC="HVP Level"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Width:HV-I",  ADDR="21", EGU="ms", DESC="HVP Width"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:HV-I",   ADDR="22", LEN="2", EGU="m", DESC="HVP Time"},
 
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Quality-I",   ADDR="26", LEN="2", DESC="Quality Factor"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Quality-I",   ADDR="26", DESC="Quality Factor"},
 
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Time:Integ-I", ADDR="27", EGU="m", DESC="Integ. time"},
 
@@ -58,6 +57,8 @@ file "eepromai.db"
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Zero-I", ADDR="18", ASLO="1e-2", PREC="2", EGU="mR/h", DESC="Zero offset"},
 
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Fail-I", ADDR="20", ASLO="-1e-2", PREC="2", EGU="mR/h", DESC="Fail level"},
+
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:HVmin-I", ADDR="24", LEN="2", ASLO="1e-2", PREC="2", EGU="mR/h", DESC="HVP Level"},
 
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Integ-I",ADDR="28", LEN="3", ASLO="1e-2", PREC="2", EGU="mR", DESC="Integ. level"},
 }
