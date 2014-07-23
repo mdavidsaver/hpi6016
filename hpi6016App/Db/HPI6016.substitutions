@@ -42,10 +42,7 @@ file "eepromlongin.db"
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Tbl:16-I", ADDR="47", DESC="Alarm table 16 (Fail)"},
 
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Ser:User-I", ADDR="48", LEN="2", DESC="User S/N"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Ser:1-I", ADDR="50", LEN="3", DESC="Serial #"},
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Ser:2-I", ADDR="53", LEN="3", DESC="Serial #2"},
 }
-
 
 file "eepromai.db"
 {
@@ -58,7 +55,12 @@ file "eepromai.db"
 
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Fail-I", ADDR="20", ASLO="-1e-2", PREC="2", EGU="mR/h", DESC="Fail level"},
 
-  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:HVmin-I", ADDR="24", LEN="2", ASLO="1e-2", PREC="2", EGU="mR/h", DESC="HVP Level"},
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:HVmin-I", ADDR="24", LEN="2", ASLO="1e-2", PREC="2", EGU="mR/h", DESC="HVP Min. Level"},
 
   {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Lvl:Integ-I",ADDR="28", LEN="3", ASLO="1e-2", PREC="2", EGU="mR", DESC="Integ. level"},
+}
+
+file "eepromstringin.db"
+{
+  {P="\$(SYS){\$(DEV)-EE}", PORT="\$(PORT)", SIG="Ver:FW-I", ADDR="50", LEN="6", DESC="FW version"},
 }

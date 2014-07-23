@@ -33,6 +33,7 @@
 #include <dbCommon.h>
 #include <aiRecord.h>
 #include <longinRecord.h>
+#include <stringinRecord.h>
 #include <waveformRecord.h>
 #include <biRecord.h>
 #include <mbbiRecord.h>
@@ -361,7 +362,7 @@ void ARMDoRead(struct bufferevent *bev, void *raw)
             dev->lastAddr = (parts[4]>>8)&0xff;
             dev->eeprom[dev->lastAddr] = parts[4]&0xff;
             if(dev->nBytes<0xff)
-                dev->nBytes++;
+                dev->nBytes++; /* assumes bytes are given in sequence. TODO: use checksum */
 
             dev->lvl[0] = dev->lvl[1] = dev->lvl[2] = 0;
             if(dev->nBytes==0xff) {
@@ -426,7 +427,7 @@ void ARMDoRead(struct bufferevent *bev, void *raw)
     if(N>=29) {
         ARMPrintf(1, dev, "Flushing junk from recv buffer");
         evbuffer_drain(rbuf, N);
-        N = evbuffer_get_length(rbuf);
+        N = 0;
 
         epicsMutexMustLock(dev->lock);
         clearData(dev);
@@ -853,18 +854,19 @@ static epicsUInt32 ARMReadEEPROM(dbCommon *prec)
 {
     epicsUInt32 ret = 0;
     const ARMRec *priv = ARMDSetup(prec);
+    int N;
+    int addr;
     if(!priv)
         return 0;
 
+    N = priv->extralen;
+    addr = priv->extra&0xff;
+
     epicsMutexMustLock(priv->dev->lock);
-    if(!priv->dev->connected || !priv->dev->datavalid || priv->dev->nBytes!=0xff) {
+    if(!priv->dev->connected || !priv->dev->datavalid || priv->dev->nBytes!=0xff || addr+N>0xff) {
         (void)recGblSetSevr(prec, COMM_ALARM, INVALID_ALARM);
 
     } else {
-        int N = priv->extralen;
-        int addr = priv->extra&0xff;
-        if(addr+N>0)
-
         while(N--) {
             ret <<= 8;
             ret |= priv->dev->eeprom[addr++];
@@ -883,6 +885,30 @@ static epicsUInt32 ARMReadEEPROMlongin(longinRecord *prec)
 static epicsUInt32 ARMReadEEPROMai(aiRecord *prec)
 {
     prec->rval = ARMReadEEPROM((dbCommon*)prec);
+    return 0;
+}
+
+static epicsUInt32 ARMReadEEPROMstringin(stringinRecord *prec)
+{
+    const ARMRec *priv = ARMDSetup((dbCommon*)prec);
+    int N;
+    int addr;
+    if(!priv)
+        return 0;
+
+    N = priv->extralen;
+    addr = priv->extra&0xff;
+
+    epicsMutexMustLock(priv->dev->lock);
+    if(!priv->dev->connected || !priv->dev->datavalid || priv->dev->nBytes!=0xff
+            || addr+N>0xff || N>=MAX_STRING_SIZE) {
+        (void)recGblSetSevr(prec, COMM_ALARM, INVALID_ALARM);
+
+    } else {
+        memcpy(prec->val, &priv->dev->eeprom[addr], N);
+        prec->val[N] = '\0';
+    }
+    epicsMutexUnlock(priv->dev->lock);
     return 0;
 }
 
@@ -915,6 +941,7 @@ long ARMLastMsg(waveformRecord* prec)
 
 initInRec(ai, 0)
 initInRec(longin, 0)
+initInRec(stringin, 0)
 initInRec(waveform, 0)
 initInRec(bi, 0)
 initInRec(mbbi, 0)
@@ -949,6 +976,9 @@ epicsExportAddress(dset, devARMEEPROMlongin);
 
 static dset6 devARMEEPROMai = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_ai, (DEVSUPFUN)ARMIoIntr}, (DEVSUPFUN)ARMReadEEPROMai};
 epicsExportAddress(dset, devARMEEPROMai);
+
+static dset6 devARMEEPROMstringin = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_stringin, (DEVSUPFUN)ARMIoIntr}, (DEVSUPFUN)ARMReadEEPROMstringin};
+epicsExportAddress(dset, devARMEEPROMstringin);
 
 static dset6 devARMLastMsgwaveform = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_waveform, (DEVSUPFUN)ARMIoIntr}, (DEVSUPFUN)ARMLastMsg};
 epicsExportAddress(dset, devARMLastMsgwaveform);

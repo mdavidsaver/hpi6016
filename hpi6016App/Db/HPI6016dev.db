@@ -163,6 +163,9 @@ record(bi, "$(P)Valid-Sts") {
 record(waveform, "$(P)Msg-I") {
     field(DTYP, "ARM Last Msg")
     field(INP , "@$(PORT)")
+    field(SCAN, "I/O Intr")
+    field(PHAS, "2")
+    field(PINI, "RUNNING")
     field(FTVL, "CHAR")
     field(NELM, "100")
     field(TSEL, "$(P)DoseRate-I.TIME")
