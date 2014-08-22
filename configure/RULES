@@ -4,3 +4,13 @@ include $(CONFIG)/RULES
 
 # Library should be rebuilt because LIBOBJS may have changed.
 $(LIBNAME): ../Makefile
+
+ifneq ($(VERHEADER),)
+
+MODVERSION ?= undefined
+MODMACRO ?= MODVERSION
+
+$(VERHEADER)::
+	$(PERL) $(TOP)/genVersionHeader.pl -t $(TOP) -V $(MODVERSION) -N $(MODMACRO) $@
+
+endif

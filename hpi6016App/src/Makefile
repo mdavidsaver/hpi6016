@@ -5,6 +5,9 @@ include $(TOP)/configure/CONFIG
 #  ADD MACRO DEFINITIONS AFTER THIS LINE
 #=============================
 
+VERHEADER = hpi6016ver.h
+MODVERSION = v2-dev
+
 #=============================
 # Build the IOC application
 
@@ -46,3 +49,4 @@ include $(TOP)/configure/RULES
 #----------------------------------------
 #  ADD RULES AFTER THIS LINE
 
+hpidrv$(OBJ): hpi6016ver.h

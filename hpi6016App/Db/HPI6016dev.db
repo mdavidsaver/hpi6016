@@ -4,6 +4,11 @@
 #  PHAS=2 - All driver parameters except DoseRate-I and Dose-I
 #  PHAS=3 - Final parameter Dose-I use to trigger post-processing fanout
 
+record(stringin, "$(P)Ver:SW-I") {
+    field(DTYP, "ARM Version")
+    field(PINI, "YES")
+}
+
 record(ai, "$(P)DoseRate-I") {
     field(DTYP, "ARM Read Param")
     field(INP , "@$(PORT) DoseRate")

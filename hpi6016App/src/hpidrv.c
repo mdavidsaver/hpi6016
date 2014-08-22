@@ -39,6 +39,8 @@
 #include <mbbiRecord.h>
 #include <mbbiDirectRecord.h>
 
+#include "hpi6016ver.h"
+
 /* Console printing verbosity
  * 0 - Print only fatal errors
  * 1 - Print abnormal errors
@@ -937,6 +939,16 @@ long ARMLastMsg(waveformRecord* prec)
     return 0;
 }
 
+static long ARMInit_noop(dbCommon *prec) {return 0;}
+
+static
+long ARMVersion(stringinRecord *prec)
+{
+    strncpy(prec->val, MODVERSION, sizeof(prec->val));
+    prec->val[sizeof(prec->val)-1] = '\0';
+    return 0;
+}
+
 #define initInRec(type, RET) static long ARMInit_ ## type (type ## Record *prec) { ARMInitCommon((dbCommon*)prec, &prec->inp); return (RET); }
 
 initInRec(ai, 0)
@@ -983,9 +995,13 @@ epicsExportAddress(dset, devARMEEPROMstringin);
 static dset6 devARMLastMsgwaveform = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_waveform, (DEVSUPFUN)ARMIoIntr}, (DEVSUPFUN)ARMLastMsg};
 epicsExportAddress(dset, devARMLastMsgwaveform);
 
+static dset6 devARMVersion = {{6, NULL, NULL, (DEVSUPFUN)&ARMInit_noop, NULL}, (DEVSUPFUN)&ARMVersion};
+epicsExportAddress(dset, devARMVersion);
+
 static
 long ARMReport(int lvl)
 {
+    errlogPrintf("Version: %s\n", MODVERSION);
     errlogPrintf("Data timeout: %d sec\n", ARMTimeout);
     if(lvl<=0) {
         errlogPrintf("Have %d ARMs\n", ellCount(&allARMs));
@@ -1022,6 +1038,7 @@ long ARMReport(int lvl)
                         errlogPrintf("\n");
                 }
             }
+            errlogFlush();
         }
     }
     errlogFlush();
