@@ -121,12 +121,12 @@ dbLoadRecords("../../db/HPI6016.db",  "SYS=SR:C28-AM,DEV=RadMon:ID,PORT=SRM_ID_2
 dbLoadRecords("../../db/HPI6016.db",  "SYS=SR:C29-AM,DEV=RadMon:ID,PORT=SRM_ID_29")
 dbLoadRecords("../../db/HPI6016.db",  "SYS=SR:C30-AM,DEV=RadMon:ID,PORT=SRM_ID_30")
 
-dbLoadRecords("../../db/HPI6016.db",  "P=XF:03IDA-AM{RadMon:1},PORT=FRM_ID_03")
-dbLoadRecords("../../db/HPI6016.db",  "P=XF:05IDA-AM{RadMon:1},PORT=FRM_ID_05")
-dbLoadRecords("../../db/HPI6016.db",  "P=XF:10IDA-AM{RadMon:1},PORT=FRM_ID_10")
-dbLoadRecords("../../db/HPI6016.db",  "P=XF:11IDA-AM{RadMon:1},PORT=FRM_ID_11")
-dbLoadRecords("../../db/HPI6016.db",  "P=XF:23IDA-AM{RadMon:1},PORT=FRM_ID_23")
-dbLoadRecords("../../db/HPI6016.db",  "P=XF:28IDA-AM{RadMon:1},PORT=FRM_ID_28")
+dbLoadRecords("../../db/HPI6016.db",  "SYS=XF:03IDA-AM,DEV=RadMon:1,PORT=FRM_ID_03")
+dbLoadRecords("../../db/HPI6016.db",  "SYS=XF:05IDA-AM,DEV=RadMon:1,PORT=FRM_ID_05")
+dbLoadRecords("../../db/HPI6016.db",  "SYS=XF:10IDA-AM,DEV=RadMon:1,PORT=FRM_ID_10")
+dbLoadRecords("../../db/HPI6016.db",  "SYS=XF:11IDA-AM,DEV=RadMon:1,PORT=FRM_ID_11")
+dbLoadRecords("../../db/HPI6016.db",  "SYS=XF:23IDA-AM,DEV=RadMon:1,PORT=FRM_ID_23")
+dbLoadRecords("../../db/HPI6016.db",  "SYS=XF:28IDA-AM,DEV=RadMon:1,PORT=FRM_ID_28")
 
 ## Load record instances
 #dbLoadRecords("db/HPI6016.db","SYS=TST,DEV=RadMon:X,PORT=sim")
@@ -162,4 +162,4 @@ create_monitor_set("ioc_settings.req", 5, "")
 create_monitor_set("RadMon.req", 20,"")
 
 dbl > records.dbl
-#system "cp records.dbl /cf-update/$HOSTNAME.$IOCNAME.dbl"
+system "cp records.dbl /cf-update/$HOSTNAME.$IOCNAME.dbl"
