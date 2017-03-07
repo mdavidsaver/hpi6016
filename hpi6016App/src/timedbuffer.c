@@ -1,3 +1,8 @@
+/*************************************************************************\
+* Copyright (c) 2015 Brookhaven National Laboratory.
+* Distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
+\*************************************************************************/
 
 #include <stdlib.h>
 #include <string.h>
