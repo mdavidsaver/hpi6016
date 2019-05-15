@@ -1,3 +1,4 @@
-EPICS driver for Health Physics Instruments (HPI) 6016 Area Radiation Monitor
+EPICS driver for Health Physics Instruments (HPI) 6012 family of Area Radiation Monitor
+This driver was developed for an HPI produced variation for Brookhaven, named 6016.
 
 Includes simulator (hpisim3.py) with fault injection options for testing.
